@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/monolith-api/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/monolith-api/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/monolith-api",
+  "projects": {
+    "monolith-api": {
+      "type": "application",
+      "root": "apps/monolith-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/monolith-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/monolith-api/tsconfig.app.json"
+      }
+    },
+    "monolith-batch": {
+      "type": "application",
+      "root": "apps/monolith-batch",
+      "entryFile": "main",
+      "sourceRoot": "apps/monolith-batch/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/monolith-batch/tsconfig.app.json"
+      }
+    }
   }
 }
