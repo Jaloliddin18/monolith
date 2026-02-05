@@ -40,12 +40,6 @@ const FurnitureSchema = new Schema(
 			type: Number,
 			required: true,
 		},
-		furnitureFamilyPrice: {
-			type: Number, // Family member price
-		},
-		furnitureBusinessPrice: {
-			type: Number, // B2B bulk price
-		},
 		furnitureLastChancePrice: {
 			type: Number, // Clearance price
 		},

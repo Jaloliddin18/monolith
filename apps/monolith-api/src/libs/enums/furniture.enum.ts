@@ -19,7 +19,7 @@ registerEnumType(FurnitureRoom, {
 	name: 'FurnitureRoom',
 });
 
-// PRODUCT CATEGORIES (IKEA Main Categories)
+// PRODUCT CATEGORIES (Main Categories)
 export enum FurnitureCategory {
 	SOFAS_ARMCHAIRS = 'SOFAS_ARMCHAIRS',
 	CHAIRS = 'CHAIRS',
@@ -42,7 +42,7 @@ registerEnumType(FurnitureCategory, {
 	name: 'FurnitureCategory',
 });
 
-// PRODUCT STATUS (IKEA Labels)
+// PRODUCT STATUS (Labels)
 export enum FurnitureStatus {
 	ACTIVE = 'ACTIVE',
 	NEW = 'NEW',

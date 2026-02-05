@@ -1,11 +1,8 @@
 import { Schema } from 'mongoose';
 import {
-	BusinessType,
-	FamilyTier,
 	MemberAuthType,
 	MemberStatus,
 	MemberType,
-	PaymentTerms,
 } from '../libs/enums/member.enum';
 
 const MemberSchema = new Schema(
@@ -57,54 +54,7 @@ const MemberSchema = new Schema(
 		memberDesc: {
 			type: String,
 		},
-		// Designer fields
-		designerPortfolio: {
-			type: [String],
-		},
-		designerSpecialty: {
-			type: [String],
-		},
-		designerExperience: {
-			type: Number,
-			default: 0,
-		},
-		memberCollections: {
-			type: Number,
-			default: 0,
-		},
-		// FAMILY MEMBERSHIP
-		familyMemberSince: {
-			type: Date,
-		},
-		familyPoints: {
-			type: Number,
-			default: 0,
-		},
-		familyTier: {
-			type: String,
-			enum: FamilyTier,
-			default: FamilyTier.STANDARD,
-		},
-		// BUSINESS ACCOUNT
-		businessName: {
-			type: String,
-		},
-		businessType: {
-			type: String,
-			enum: BusinessType,
-		},
-		businessRegistration: {
-			type: String,
-		},
-		taxId: {
-			type: String,
-		},
-		paymentTerms: {
-			type: String,
-			enum: PaymentTerms,
-			default: PaymentTerms.IMMEDIATE,
-		},
-		creditLimit: {
+		memberDesigns: {
 			type: Number,
 			default: 0,
 		},
@@ -129,6 +79,10 @@ const MemberSchema = new Schema(
 			default: 0,
 		},
 		memberComments: {
+			type: Number,
+			default: 0,
+		},
+		memberPoints: {
 			type: Number,
 			default: 0,
 		},
