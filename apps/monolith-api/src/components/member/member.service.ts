@@ -24,6 +24,8 @@ export class MemberService {
 		try {
 			const result = await this.memberModel.create(input);
 
+			result.accessToken = await this.authService.createToken(result);
+
 			return result;
 		} catch (err) {
 			console.log('Error, Service.model:', err.message);
@@ -41,6 +43,7 @@ export class MemberService {
 		} else if (response.memberStatus === MemberStatus.BLOCK) {
 			throw new InternalServerErrorException(Message.BLOCKED_USER);
 		}
+
 		const isMatch = await this.authService.comparePasswords(
 			input.memberPassword,
 			response.memberPassword!,
@@ -49,6 +52,7 @@ export class MemberService {
 		if (!isMatch)
 			throw new InternalServerErrorException(Message.WRONG_PASSWORD);
 
+		response.accessToken = await this.authService.createToken(response);
 		return response;
 	}
 	public async updateMember(): Promise<string> {
