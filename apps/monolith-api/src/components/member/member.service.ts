@@ -9,13 +9,18 @@ import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { Message } from '../../libs/enums/common.enum';
 import { MemberStatus } from '../../libs/enums/member.enum';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class MemberService {
 	constructor(
 		@InjectModel('Member') private readonly memberModel: Model<Member>,
+		private readonly authService: AuthService,
 	) {}
 	public async signup(input: MemberInput): Promise<Member> {
+		input.memberPassword = await this.authService.hashPasword(
+			input.memberPassword,
+		);
 		try {
 			const result = await this.memberModel.create(input);
 
@@ -36,8 +41,11 @@ export class MemberService {
 		} else if (response.memberStatus === MemberStatus.BLOCK) {
 			throw new InternalServerErrorException(Message.BLOCKED_USER);
 		}
+		const isMatch = await this.authService.comparePasswords(
+			input.memberPassword,
+			response.memberPassword!,
+		);
 
-		const isMatch = memberPassword === response.memberPassword;
 		if (!isMatch)
 			throw new InternalServerErrorException(Message.WRONG_PASSWORD);
 
