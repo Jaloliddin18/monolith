@@ -5,10 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
-import { Member } from '../../libs/dto/member/member';
-import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
-import { Message } from '../../libs/enums/common.enum';
-import { MemberStatus } from '../../libs/enums/member.enum';
+import { Member, Members } from '../../libs/dto/member/member';
+import {
+	DesignersInquiry,
+	LoginInput,
+	MemberInput,
+} from '../../libs/dto/member/member.input';
+import { Direction, Message } from '../../libs/enums/common.enum';
+import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { T } from '../../libs/types/common';
@@ -109,8 +113,44 @@ export class MemberService {
 					.exec();
 				targetMember.memberViews++;
 			}
+
+			// likedByMe
+			// followedByMe
 		}
 		return targetMember;
+	}
+
+	public async getDesigners(
+		memberId: ObjectId,
+		input: DesignersInquiry,
+	): Promise<Members> {
+		const { text } = input.search;
+		const match: T = {
+			memberType: MemberType.DESIGNER,
+			memberStatus: MemberStatus.ACTIVE,
+		};
+		const sort: T = {
+			[input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
+		};
+		if (text) match.memberNick = { $regex: new RegExp(text, 'i') };
+		const result = await this.memberModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$facet: {
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+		if (!result.length)
+			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		return result[0];
 	}
 
 	public async getAllMembersByAdmin(): Promise<string> {
