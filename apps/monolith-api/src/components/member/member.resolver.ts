@@ -59,6 +59,7 @@ export class MemberResolver {
 		delete input._id;
 		return await this.memberService.updateMember(memberId, input);
 	}
+
 	@UseGuards(WithoutGuard)
 	@Query(() => Member)
 	public async getMember(
