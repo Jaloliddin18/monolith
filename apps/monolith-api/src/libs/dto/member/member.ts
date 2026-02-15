@@ -6,13 +6,11 @@ import {
 	MemberType,
 } from '../../enums/member.enum';
 
-// data transfer object from backend to frontend
 @ObjectType()
 export class Member {
 	@Field(() => String)
 	_id: ObjectId;
 
-	//type integration is also done for incoming and outgoing values for GraphQL so that we  can deliver 100% accurate info to the frontend
 	@Field(() => MemberType)
 	memberType: MemberType;
 

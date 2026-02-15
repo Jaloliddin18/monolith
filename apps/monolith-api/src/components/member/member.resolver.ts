@@ -4,6 +4,7 @@ import {
 	DesignersInquiry,
 	LoginInput,
 	MemberInput,
+	MembersInquiry,
 } from '../../libs/dto/member/member.input';
 import { Member, Members } from '../../libs/dto/member/member';
 import { UseGuards } from '@nestjs/common';
@@ -20,6 +21,8 @@ import { shapeIntoMongoObjectId } from '../../libs/config';
 @Resolver()
 export class MemberResolver {
 	constructor(private readonly memberService: MemberService) {}
+
+	/**  MEMBER  **/
 
 	@Mutation(() => Member)
 	public async signup(@Args('input') input: MemberInput): Promise<Member> {
@@ -87,11 +90,13 @@ export class MemberResolver {
 
 	/**  ADMIN  **/
 	@Roles(MemberType.ADMIN)
-	@UseGuards(AuthGuard)
-	@Mutation(() => String)
-	public async getAllMembersByAdmin(): Promise<string> {
+	@UseGuards(RolesGuard)
+	@Query(() => Members)
+	public async getAllMembersByAdmin(
+		@Args('input') input: MembersInquiry,
+	): Promise<Members> {
 		console.log('Mutation: getAllMembersByAdmin');
-		return this.memberService.getAllMembersByAdmin();
+		return await this.memberService.getAllMembersByAdmin(input);
 	}
 
 	@Roles(MemberType.ADMIN)

@@ -8,6 +8,13 @@ export const availableDesignerSorts = [
 	'memberRank',
 ];
 
+export const availableMemberSort = [
+	'createdAt',
+	'updatedAt',
+	'memberLikes',
+	'memberViews',
+];
+
 export const shapeIntoMongoObjectId = (target: any) => {
 	return typeof target === 'string' ? new ObjectId(target) : target;
 };
