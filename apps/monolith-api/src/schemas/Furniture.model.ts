@@ -44,52 +44,49 @@ const FurnitureSchema = new Schema(
 			type: Number, // Clearance price
 		},
 		furnitureDimensions: {
-			width: { type: Number, required: true },
-			height: { type: Number, required: true },
-			depth: { type: Number, required: true },
-		},
-		furnitureWeight: {
-			type: Number,
-		},
-		// Package dimensions (flat-pack)
-		packageDimensions: {
 			width: { type: Number },
 			height: { type: Number },
 			depth: { type: Number },
-			weight: { type: Number },
-			packages: { type: Number, default: 1 },
 		},
-		furnitureMaterials: {
-			type: [String],
+		furnitureWeight: {
+			type: Number,
+			required: true,
+		},
+
+		furnitureMaterial: {
+			type: String,
 			enum: FurnitureMaterial,
 			required: true,
 		},
-		furnitureColors: {
-			type: [String],
+		furnitureColor: {
+			type: String,
 			required: true,
 		},
-		sustainabilityLabels: {
-			type: [String],
+		sustainabilityLabel: {
+			type: String,
 			enum: SustainabilityLabel,
-			default: [SustainabilityLabel.NONE],
+			default: SustainabilityLabel.NONE,
 		},
 		assemblyType: {
 			type: String,
 			enum: AssemblyType,
 			default: AssemblyType.SELF_ASSEMBLY,
+			required: true,
 		},
 		assemblyTime: {
 			type: Number, // Minutes
+			required: true,
 		},
 		assemblyDifficulty: {
 			type: String,
 			enum: AssemblyDifficulty,
 			default: AssemblyDifficulty.MEDIUM,
 		},
-		deliveryMethods: {
-			type: [String],
+		deliveryMethod: {
+			type: String,
 			enum: DeliveryMethod,
-			default: [DeliveryMethod.HOME_DELIVERY],
+			default: DeliveryMethod.HOME_DELIVERY,
+			required: true,
 		},
 		furnitureImages: {
 			type: [String],
@@ -123,13 +120,9 @@ const FurnitureSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
-		furnitureRating: {
-			type: Number,
-			default: 0,
-		},
-		furnitureReviews: {
-			type: Number,
-			default: 0,
+		furnitureRent: {
+			type: Boolean,
+			default: false,
 		},
 		launchedAt: {
 			type: Date,
@@ -139,6 +132,12 @@ const FurnitureSchema = new Schema(
 		},
 		deletedAt: {
 			type: Date,
+		},
+
+		memberId: {
+			type: Schema.Types.ObjectId,
+			required: true,
+			ref: 'Member',
 		},
 	},
 	{ timestamps: true, collection: 'furnitures' },

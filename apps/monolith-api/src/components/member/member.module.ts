@@ -12,8 +12,8 @@ import { FurnitureModule } from '../furniture/furniture.module';
 		MongooseModule.forFeature([{ name: 'Member', schema: MemberSchema }]),
 		AuthModule,
 		ViewModule,
-		FurnitureModule,
 	],
 	providers: [MemberResolver, MemberService],
+	exports: [MemberService],
 })
 export class MemberModule {}

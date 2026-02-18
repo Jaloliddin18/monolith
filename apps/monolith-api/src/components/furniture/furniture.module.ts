@@ -12,6 +12,7 @@ import { MemberModule } from '../member/member.module';
 		MongooseModule.forFeature([{ name: 'Furniture', schema: FurnitureSchema }]),
 		AuthModule,
 		ViewModule,
+		MemberModule,
 	],
 	providers: [FurnitureResolver, FurnitureService],
 	exports: [FurnitureService],
