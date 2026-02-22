@@ -11,7 +11,7 @@ import {
 	FurnitureStyle,
 	SustainabilityLabel,
 } from '../../enums/furniture.enum';
-import { TotalCounter } from '../member/member';
+import { Member, TotalCounter } from '../member/member';
 
 @ObjectType()
 export class FurnitureDimensions {
@@ -125,6 +125,9 @@ export class Furniture {
 
 	@Field(() => String)
 	memberId: ObjectId;
+
+	@Field(() => Member, { nullable: true })
+	memberData?: Member;
 }
 
 @ObjectType()
