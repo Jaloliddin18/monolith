@@ -13,6 +13,8 @@ import { MemberService } from '../member/member.service';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { FurnitureStatus } from '../../libs/enums/furniture.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
+import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
+import moment from 'moment';
 
 @Injectable()
 export class FurnitureService {
@@ -86,5 +88,37 @@ export class FurnitureService {
 				{ new: true },
 			)
 			.exec();
+	}
+
+	public async updateFurniture(
+		memberId: ObjectId,
+		input: FurnitureUpdate,
+	): Promise<Furniture> {
+		let { furnitureStatus, discontinuedAt, deletedAt } = input;
+		const search: T = {
+			_id: input._id,
+			memberId: memberId,
+			furnitureStatus: FurnitureStatus.ACTIVE,
+		};
+
+		if (furnitureStatus === FurnitureStatus.DISCONTINUED)
+			discontinuedAt = moment().toDate();
+		else if (furnitureStatus === FurnitureStatus.DELETE)
+			deletedAt = moment().toDate();
+		// registering the furniture discontinued or deleted time
+
+		const result = await this.furnitureModel
+			.findOneAndUpdate(search, input, { new: true })
+			.exec();
+		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+
+		if (deletedAt) {
+			await this.memberService.memberStatsEditor({
+				_id: memberId,
+				targetKey: 'memberDesigns',
+				modifier: -1,
+			});
+		}
+		return result;
 	}
 }

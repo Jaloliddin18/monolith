@@ -10,6 +10,7 @@ import { Furniture } from '../../libs/dto/furniture/furniture';
 import { FurnitureInput } from '../../libs/dto/furniture/furniture.input';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
 
 @Resolver()
 export class FurnitureResolver {
@@ -36,5 +37,17 @@ export class FurnitureResolver {
 		console.log('Query: getFurniture');
 		const furnitureId = shapeIntoMongoObjectId(input);
 		return await this.furnitureService.getFurniture(memberId, furnitureId);
+	}
+
+	@Roles(MemberType.DESIGNER)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => Furniture)
+	public async updateFurniture(
+		@Args('input') input: FurnitureUpdate,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furniture> {
+		console.log('Query: updateProperty');
+		input._id = shapeIntoMongoObjectId(input._id);
+		return await this.furnitureService.updateFurniture(memberId, input);
 	}
 }
