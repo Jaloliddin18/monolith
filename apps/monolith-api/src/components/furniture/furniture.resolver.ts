@@ -8,6 +8,7 @@ import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
 import { Furniture, Furnitures } from '../../libs/dto/furniture/furniture';
 import {
+	AllFurnituresInquiry,
 	DesignerFurnituresInquiry,
 	FurnitureInput,
 	FurnituresInquiry,
@@ -74,5 +75,18 @@ export class FurnitureResolver {
 	): Promise<Furnitures> {
 		console.log('Query: getDesignerFurnitures');
 		return await this.furnitureService.getDesignerFurnitures(memberId, input);
+	}
+
+	/**  ADMIN  **/
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Query((returns) => Furnitures)
+	public async getAllFurnituresByAdmin(
+		@Args('input') input: AllFurnituresInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furnitures> {
+		console.log('Query: getAllFurnituresByAdmin');
+		return await this.furnitureService.getAllFurnituresByAdmin(input);
 	}
 }

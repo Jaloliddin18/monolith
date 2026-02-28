@@ -8,6 +8,7 @@ import { Model, ObjectId } from 'mongoose';
 import { ViewService } from '../view/view.service';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import {
+	AllFurnituresInquiry,
 	DesignerFurnituresInquiry,
 	FurnitureInput,
 	FurnituresInquiry,
@@ -256,6 +257,41 @@ export class FurnitureService {
 							{
 								$limit: input.limit,
 							},
+							lookupMember,
+							{ $unwind: '$memberData' },
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+		if (!result.length)
+			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		return result[0];
+	}
+
+	public async getAllFurnituresByAdmin(
+		input: AllFurnituresInquiry,
+	): Promise<Furnitures> {
+		const { furnitureStatus, roomList, categoryList } = input.search ?? {};
+		const match: T = {};
+		const sort: T = {
+			[input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
+		};
+
+		if (furnitureStatus) match.furnitureStatus = furnitureStatus;
+		if (roomList) match.furnitureRoom = { $in: roomList };
+		if (categoryList) match.furnitureCategory = { $in: categoryList };
+
+		const result = await this.furnitureModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$facet: {
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],

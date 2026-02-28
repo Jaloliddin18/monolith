@@ -280,3 +280,57 @@ export class DesignerFurnituresInquiry {
 	@Field(() => DFISearch, { nullable: true })
 	search?: DFISearch;
 }
+
+@InputType()
+class ALFISearch {
+	@IsOptional()
+	@Field(() => FurnitureStatus, { nullable: true })
+	furnitureStatus?: FurnitureStatus;
+
+	@IsOptional()
+	@Field(() => [FurnitureRoom], { nullable: true })
+	roomList?: FurnitureRoom[];
+
+	@IsOptional()
+	@Field(() => [FurnitureCategory], { nullable: true })
+	categoryList?: FurnitureCategory[];
+}
+
+@InputType()
+export class AllFurnituresInquiry {
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	page: number;
+
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	limit: number;
+
+	@IsOptional()
+	@IsIn(availableFurnitureSorts)
+	@Field(() => String, { nullable: true })
+	sort?: string;
+
+	@IsOptional()
+	@Field(() => Direction, { nullable: true })
+	direction?: Direction;
+
+	@IsOptional()
+	@Field(() => ALFISearch, { nullable: true })
+	search?: ALFISearch;
+}
+
+@InputType()
+export class OrdinaryInquiry {
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	page: number;
+
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	limit: number;
+}
