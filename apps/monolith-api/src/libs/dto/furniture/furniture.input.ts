@@ -8,6 +8,7 @@ import {
 	FurnitureColor,
 	FurnitureMaterial,
 	FurnitureRoom,
+	FurnitureStatus,
 	FurnitureStyle,
 } from '../../enums/furniture.enum';
 import type { ObjectId } from 'mongoose';
@@ -68,9 +69,13 @@ export class FurnitureInput {
 	@Field(() => AssemblyType)
 	assemblyType: AssemblyType;
 
-	@IsNotEmpty()
-	@Field(() => Number)
-	assemblyTime: number;
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	assemblyTime?: number;
+
+	@IsOptional()
+	@Field(() => AssemblyDifficulty, { nullable: true })
+	assemblyDifficulty?: AssemblyDifficulty;
 
 	@IsNotEmpty()
 	@Field(() => DeliveryMethod)
@@ -241,4 +246,37 @@ export class FurnituresInquiry {
 	@IsOptional()
 	@Field(() => FIsearch, { nullable: true })
 	search?: FIsearch;
+}
+
+@InputType()
+class DFISearch {
+	@IsOptional()
+	@Field(() => FurnitureStatus, { nullable: true })
+	furnitureStatus?: FurnitureStatus;
+}
+
+@InputType()
+export class DesignerFurnituresInquiry {
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	page: number;
+
+	@IsNotEmpty()
+	@Min(1)
+	@Field(() => Int)
+	limit: number;
+
+	@IsOptional()
+	@IsIn(availableFurnitureSorts)
+	@Field(() => String, { nullable: true })
+	sort?: string;
+
+	@IsOptional()
+	@Field(() => Direction, { nullable: true })
+	direction?: Direction;
+
+	@IsOptional()
+	@Field(() => DFISearch, { nullable: true })
+	search?: DFISearch;
 }

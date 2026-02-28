@@ -76,8 +76,8 @@ export class Furniture {
 	@Field(() => FurnitureColor)
 	furnitureColor: FurnitureColor;
 
-	@Field(() => Number)
-	assemblyTime: number;
+	@Field(() => Number, { nullable: true })
+	assemblyTime?: number;
 
 	@Field(() => [String])
 	furnitureImages: string[];

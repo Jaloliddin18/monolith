@@ -77,12 +77,10 @@ const FurnitureSchema = new Schema(
 		},
 		assemblyTime: {
 			type: Number, // Minutes
-			required: true,
 		},
 		assemblyDifficulty: {
 			type: String,
 			enum: AssemblyDifficulty,
-			default: AssemblyDifficulty.MEDIUM,
 		},
 		deliveryMethod: {
 			type: String,
