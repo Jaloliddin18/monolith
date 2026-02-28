@@ -304,4 +304,38 @@ export class FurnitureService {
 			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		return result[0];
 	}
+
+	public async updateFurnitureByAdmin(
+		input: FurnitureUpdate,
+	): Promise<Furniture> {
+		let { furnitureStatus, discontinuedAt, deletedAt } = input;
+
+		const search: T = {
+			_id: input._id,
+			furnitureStatus: FurnitureStatus.ACTIVE && FurnitureStatus.DISCONTINUED,
+		};
+
+		if (furnitureStatus === FurnitureStatus.DISCONTINUED)
+			discontinuedAt = moment().toDate();
+		else if (furnitureStatus === FurnitureStatus.DELETE)
+			deletedAt = moment().toDate();
+
+		const result = await this.furnitureModel
+			.findOneAndUpdate(search, input, {
+				new: true,
+			})
+			.exec();
+
+		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+
+		if (deletedAt) {
+			await this.memberService.memberStatsEditor({
+				_id: result.memberId,
+				targetKey: 'memberDesigns',
+				modifier: -1,
+			});
+		}
+
+		return result;
+	}
 }

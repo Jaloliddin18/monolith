@@ -89,4 +89,15 @@ export class FurnitureResolver {
 		console.log('Query: getAllFurnituresByAdmin');
 		return await this.furnitureService.getAllFurnituresByAdmin(input);
 	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => Furniture)
+	public async updateFurnitureByAdmin(
+		@Args('input') input: FurnitureUpdate,
+	): Promise<Furniture> {
+		console.log('Mutation: updateFurnitureByAdmin');
+		input._id = shapeIntoMongoObjectId(input._id); // property ObjectId
+		return await this.furnitureService.updateFurnitureByAdmin(input);
+	}
 }
