@@ -5,6 +5,7 @@ import {
 	FurnitureStyle,
 	FurnitureStatus,
 	FurnitureMaterial,
+	FurnitureColor,
 	AssemblyType,
 	AssemblyDifficulty,
 	DeliveryMethod,
@@ -60,6 +61,7 @@ const FurnitureSchema = new Schema(
 		},
 		furnitureColor: {
 			type: String,
+			enum: FurnitureColor,
 			required: true,
 		},
 		sustainabilityLabel: {

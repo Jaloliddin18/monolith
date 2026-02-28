@@ -7,6 +7,7 @@ import {
 	AssemblyType,
 	DeliveryMethod,
 	FurnitureCategory,
+	FurnitureColor,
 	FurnitureMaterial,
 	FurnitureRoom,
 	FurnitureStatus,
@@ -77,9 +78,8 @@ export class FurnitureUpdate {
 	furnitureMaterial?: FurnitureMaterial;
 
 	@IsOptional()
-	@Length(3, 100)
-	@Field(() => String, { nullable: true })
-	furnitureColor?: string;
+	@Field(() => FurnitureColor, { nullable: true })
+	furnitureColor?: FurnitureColor;
 
 	@IsOptional()
 	@Field(() => SustainabilityLabel, { nullable: true })

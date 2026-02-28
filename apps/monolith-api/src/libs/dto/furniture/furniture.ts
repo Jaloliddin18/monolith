@@ -5,6 +5,7 @@ import {
 	AssemblyType,
 	DeliveryMethod,
 	FurnitureCategory,
+	FurnitureColor,
 	FurnitureMaterial,
 	FurnitureRoom,
 	FurnitureStatus,
@@ -72,8 +73,8 @@ export class Furniture {
 	@Field(() => Number)
 	furnitureWeight: number;
 
-	@Field(() => String)
-	furnitureColor: string;
+	@Field(() => FurnitureColor)
+	furnitureColor: FurnitureColor;
 
 	@Field(() => Number)
 	assemblyTime: number;

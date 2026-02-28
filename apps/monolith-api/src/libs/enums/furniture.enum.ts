@@ -126,3 +126,24 @@ export enum SustainabilityLabel {
 registerEnumType(SustainabilityLabel, {
 	name: 'SustainabilityLabel',
 });
+
+// COLORS (IKEA-style color families)
+export enum FurnitureColor {
+	WHITE = 'WHITE',
+	BLACK = 'BLACK',
+	GREY = 'GREY',
+	BEIGE = 'BEIGE',
+	BROWN = 'BROWN',
+	BLUE = 'BLUE',
+	GREEN = 'GREEN',
+	RED = 'RED',
+	PINK = 'PINK',
+	YELLOW = 'YELLOW',
+	ORANGE = 'ORANGE',
+	PURPLE = 'PURPLE',
+	NATURAL_WOOD = 'NATURAL_WOOD',
+	MULTICOLOR = 'MULTICOLOR',
+}
+registerEnumType(FurnitureColor, {
+	name: 'FurnitureColor',
+});

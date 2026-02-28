@@ -30,6 +30,8 @@ export const availableFurnitureSorts = [
 	'furnitureViews',
 	'furnitureRank',
 	'furniturePrice',
+	'furnitureDiscount',
+	'furnitureComments',
 ];
 
 // IMAGE CONFIGURATION

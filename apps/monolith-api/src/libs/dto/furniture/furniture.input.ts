@@ -1,9 +1,11 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsIn, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
 import {
+	AssemblyDifficulty,
 	AssemblyType,
 	DeliveryMethod,
 	FurnitureCategory,
+	FurnitureColor,
 	FurnitureMaterial,
 	FurnitureRoom,
 	FurnitureStyle,
@@ -59,8 +61,8 @@ export class FurnitureInput {
 	furnitureMaterial: FurnitureMaterial;
 
 	@IsNotEmpty()
-	@Field(() => String)
-	furnitureColor: string;
+	@Field(() => FurnitureColor)
+	furnitureColor: FurnitureColor;
 
 	@IsNotEmpty()
 	@Field(() => AssemblyType)
@@ -137,6 +139,33 @@ export class PeriodsRange {
 }
 
 @InputType()
+export class DimensionsRange {
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	minWidth?: number;
+
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	maxWidth?: number;
+
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	minHeight?: number;
+
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	maxHeight?: number;
+
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	minDepth?: number;
+
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	maxDepth?: number;
+}
+
+@InputType()
 export class FIsearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
@@ -159,6 +188,14 @@ export class FIsearch {
 	materialList?: FurnitureMaterial[];
 
 	@IsOptional()
+	@Field(() => [FurnitureColor], { nullable: true })
+	colorList?: FurnitureColor[];
+
+	@IsOptional()
+	@Field(() => [AssemblyDifficulty], { nullable: true })
+	assemblyDifficultyList?: AssemblyDifficulty[];
+
+	@IsOptional()
 	@IsIn(availableOptions, { each: true })
 	@Field(() => [String], { nullable: true })
 	options?: string[];
@@ -166,6 +203,10 @@ export class FIsearch {
 	@IsOptional()
 	@Field(() => PricesRange, { nullable: true })
 	pricesRange?: PricesRange;
+
+	@IsOptional()
+	@Field(() => DimensionsRange, { nullable: true })
+	dimensionsRange?: DimensionsRange;
 
 	@IsOptional()
 	@Field(() => PeriodsRange, { nullable: true })

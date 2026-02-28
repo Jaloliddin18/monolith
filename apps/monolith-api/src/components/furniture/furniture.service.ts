@@ -169,8 +169,11 @@ export class FurnitureService {
 			categoryList,
 			styleList,
 			materialList,
+			colorList,
+			assemblyDifficultyList,
 			options,
 			pricesRange,
+			dimensionsRange,
 			periodsRange,
 			text,
 		} = input.search;
@@ -183,11 +186,37 @@ export class FurnitureService {
 			match.furnitureStyle = { $in: styleList };
 		if (materialList && materialList.length)
 			match.furnitureMaterial = { $in: materialList };
+		if (colorList && colorList.length)
+			match.furnitureColor = { $in: colorList };
+		if (assemblyDifficultyList && assemblyDifficultyList.length)
+			match.assemblyDifficulty = { $in: assemblyDifficultyList };
 
 		if (pricesRange)
 			match.furniturePrice = { $gte: pricesRange.start, $lte: pricesRange.end };
 		if (periodsRange)
 			match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
+
+		// Dimensions range — query nested furnitureDimensions fields
+		if (dimensionsRange) {
+			const { minWidth, maxWidth, minHeight, maxHeight, minDepth, maxDepth } =
+				dimensionsRange;
+			if (minWidth || maxWidth) {
+				match['furnitureDimensions.width'] = {};
+				if (minWidth) match['furnitureDimensions.width'].$gte = minWidth;
+				if (maxWidth) match['furnitureDimensions.width'].$lte = maxWidth;
+			}
+			if (minHeight || maxHeight) {
+				match['furnitureDimensions.height'] = {};
+				if (minHeight) match['furnitureDimensions.height'].$gte = minHeight;
+				if (maxHeight) match['furnitureDimensions.height'].$lte = maxHeight;
+			}
+			if (minDepth || maxDepth) {
+				match['furnitureDimensions.depth'] = {};
+				if (minDepth) match['furnitureDimensions.depth'].$gte = minDepth;
+				if (maxDepth) match['furnitureDimensions.depth'].$lte = maxDepth;
+			}
+		}
+
 		if (text) match.furnitureTitle = { $regex: new RegExp(text, 'i') };
 		if (options) {
 			match['$or'] = options.map((ele) => {
