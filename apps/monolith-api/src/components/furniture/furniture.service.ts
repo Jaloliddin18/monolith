@@ -338,4 +338,19 @@ export class FurnitureService {
 
 		return result;
 	}
+
+	public async removeFurnitureByAdmin(
+		furnitureId: ObjectId,
+	): Promise<Furniture> {
+		const search: T = {
+			_id: furnitureId,
+			furnitureStatus: FurnitureStatus.DELETE,
+		};
+
+		const result = await this.furnitureModel.findOneAndDelete(search).exec();
+
+		if (!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
+
+		return result;
+	}
 }

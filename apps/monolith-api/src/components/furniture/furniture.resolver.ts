@@ -100,4 +100,15 @@ export class FurnitureResolver {
 		input._id = shapeIntoMongoObjectId(input._id); // property ObjectId
 		return await this.furnitureService.updateFurnitureByAdmin(input);
 	}
+
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation((returns) => Furniture)
+	public async removeFurnitureByAdmin(
+		@Args('furnitureId') input: string,
+	): Promise<Furniture> {
+		console.log('Mutation: removeFurnitureByAdmin');
+		const furnitureId = shapeIntoMongoObjectId(input);
+		return await this.furnitureService.removeFurnitureByAdmin(furnitureId);
+	}
 }
