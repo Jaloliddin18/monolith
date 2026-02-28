@@ -6,8 +6,11 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { UseGuards } from '@nestjs/common';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import type { ObjectId } from 'mongoose';
-import { Furniture } from '../../libs/dto/furniture/furniture';
-import { FurnitureInput } from '../../libs/dto/furniture/furniture.input';
+import { Furniture, Furnitures } from '../../libs/dto/furniture/furniture';
+import {
+	FurnitureInput,
+	FurnituresInquiry,
+} from '../../libs/dto/furniture/furniture.input';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
@@ -49,5 +52,15 @@ export class FurnitureResolver {
 		console.log('Query: updateProperty');
 		input._id = shapeIntoMongoObjectId(input._id);
 		return await this.furnitureService.updateFurniture(memberId, input);
+	}
+
+	@UseGuards(WithoutGuard)
+	@Query((returns) => Furnitures)
+	public async getFurnitures(
+		@Args('input') input: FurnituresInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furnitures> {
+		console.log('Query: getProperties');
+		return await this.furnitureService.getFurnitures(memberId, input);
 	}
 }

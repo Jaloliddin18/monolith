@@ -126,6 +126,26 @@ export class FurnitureUpdate {
 	@Field(() => Boolean, { nullable: true })
 	furnitureRent?: boolean;
 
+	@IsOptional()
+	@Field(() => Number, { nullable: true })
+	furnitureDiscount?: number;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	discountStart?: Date;
+
+	@IsOptional()
+	@Field(() => Date, { nullable: true })
+	discountEnd?: Date;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	furnitureOnSale?: boolean;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	furnitureBestseller?: boolean;
+
 	discontinuedAt?: Date;
 
 	deletedAt?: Date;

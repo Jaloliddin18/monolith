@@ -124,6 +124,26 @@ const FurnitureSchema = new Schema(
 			type: Boolean,
 			default: false,
 		},
+		furnitureDiscount: {
+			type: Number, // Percentage (0-100)
+			default: 0,
+			min: 0,
+			max: 100,
+		},
+		discountStart: {
+			type: Date,
+		},
+		discountEnd: {
+			type: Date,
+		},
+		furnitureOnSale: {
+			type: Boolean,
+			default: false,
+		},
+		furnitureBestseller: {
+			type: Boolean,
+			default: false,
+		},
 		launchedAt: {
 			type: Date,
 		},

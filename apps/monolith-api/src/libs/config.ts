@@ -17,6 +17,21 @@ export const availableMemberSort = [
 	'memberViews',
 ];
 
+export const availableOptions = [
+	'furnitureRent',
+	'furnitureOnSale',
+	'furnitureBestseller',
+];
+
+export const availableFurnitureSorts = [
+	'createdAt',
+	'updatedAt',
+	'furnitureLikes',
+	'furnitureViews',
+	'furnitureRank',
+	'furniturePrice',
+];
+
 // IMAGE CONFIGURATION
 export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 export const getSerialForImage = (filename: string) => {
@@ -26,4 +41,13 @@ export const getSerialForImage = (filename: string) => {
 
 export const shapeIntoMongoObjectId = (target: any) => {
 	return typeof target === 'string' ? new ObjectId(target) : target;
+};
+
+export const lookupMember = {
+	$lookup: {
+		from: 'members',
+		localField: 'memberId',
+		foreignField: '_id',
+		as: 'memberData',
+	},
 };

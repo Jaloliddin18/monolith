@@ -6,14 +6,18 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { ViewService } from '../view/view.service';
-import { Message } from '../../libs/enums/common.enum';
-import { FurnitureInput } from '../../libs/dto/furniture/furniture.input';
-import { Furniture } from '../../libs/dto/furniture/furniture';
+import { Direction, Message } from '../../libs/enums/common.enum';
+import {
+	FurnitureInput,
+	FurnituresInquiry,
+} from '../../libs/dto/furniture/furniture.input';
+import { Furniture, Furnitures } from '../../libs/dto/furniture/furniture';
 import { MemberService } from '../member/member.service';
 import { StatisticModifier, T } from '../../libs/types/common';
 import { FurnitureStatus } from '../../libs/enums/furniture.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
+import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import moment from 'moment';
 
 @Injectable()
@@ -120,5 +124,75 @@ export class FurnitureService {
 			});
 		}
 		return result;
+	}
+
+	public async getFurnitures(
+		memberId: ObjectId,
+		input: FurnituresInquiry,
+	): Promise<Furnitures> {
+		const match: T = { furnitureStatus: FurnitureStatus.ACTIVE };
+		const sort: T = {
+			[input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC,
+		};
+
+		this.shapeMatchQuery(match, input);
+		console.log('match:', match);
+
+		const result = await this.furnitureModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$facet: {
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
+							lookupMember,
+							{ $unwind: '$memberData' },
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+		if (!result.length)
+			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		return result[0];
+	}
+
+	private shapeMatchQuery(match: T, input: FurnituresInquiry): void {
+		if (!input.search || Object.keys(input.search).length === 0) return;
+
+		const {
+			memberId,
+			roomList,
+			categoryList,
+			styleList,
+			materialList,
+			options,
+			pricesRange,
+			periodsRange,
+			text,
+		} = input.search;
+
+		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
+		if (roomList && roomList.length) match.furnitureRoom = { $in: roomList };
+		if (categoryList && categoryList.length)
+			match.furnitureCategory = { $in: categoryList };
+		if (styleList && styleList.length)
+			match.furnitureStyle = { $in: styleList };
+		if (materialList && materialList.length)
+			match.furnitureMaterial = { $in: materialList };
+
+		if (pricesRange)
+			match.furniturePrice = { $gte: pricesRange.start, $lte: pricesRange.end };
+		if (periodsRange)
+			match.createdAt = { $gte: periodsRange.start, $lte: periodsRange.end };
+		if (text) match.furnitureTitle = { $regex: new RegExp(text, 'i') };
+		if (options) {
+			match['$or'] = options.map((ele) => {
+				return { [ele]: true };
+			});
+		}
 	}
 }

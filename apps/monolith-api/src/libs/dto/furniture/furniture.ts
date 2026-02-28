@@ -108,6 +108,21 @@ export class Furniture {
 	@Field(() => Boolean)
 	furnitureRent: boolean;
 
+	@Field(() => Int)
+	furnitureDiscount: number;
+
+	@Field(() => Date, { nullable: true })
+	discountStart?: Date;
+
+	@Field(() => Date, { nullable: true })
+	discountEnd?: Date;
+
+	@Field(() => Boolean)
+	furnitureOnSale: boolean;
+
+	@Field(() => Boolean)
+	furnitureBestseller: boolean;
+
 	@Field(() => Date, { nullable: true })
 	launchedAt?: Date;
 
