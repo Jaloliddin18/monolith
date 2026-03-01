@@ -83,19 +83,6 @@ export class FurnitureService {
 		return targetFurniture;
 	}
 
-	public async furnitureStatsEditor(
-		input: StatisticModifier,
-	): Promise<Furniture> {
-		const { _id, targetKey, modifier } = input;
-		return await this.furnitureModel
-			.findOneAndUpdate(
-				{ _id },
-				{ $inc: { [targetKey]: modifier } },
-				{ new: true },
-			)
-			.exec();
-	}
-
 	public async updateFurniture(
 		memberId: ObjectId,
 		input: FurnitureUpdate,
@@ -352,5 +339,18 @@ export class FurnitureService {
 		if (!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
 
 		return result;
+	}
+
+	public async furnitureStatsEditor(
+		input: StatisticModifier,
+	): Promise<Furniture> {
+		const { _id, targetKey, modifier } = input;
+		return await this.furnitureModel
+			.findOneAndUpdate(
+				{ _id },
+				{ $inc: { [targetKey]: modifier } },
+				{ new: true },
+			)
+			.exec();
 	}
 }
