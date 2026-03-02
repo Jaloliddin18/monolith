@@ -1,0 +1,92 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+import type { ObjectId } from 'mongoose';
+import { Member, TotalCounter } from '../member/member';
+import { LikedByMe } from '../like/like';
+
+@ObjectType()
+export class FollowedByMe {
+	@Field(() => String)
+	followingId: ObjectId;
+
+	@Field(() => String)
+	followerId: ObjectId;
+
+	@Field(() => Boolean)
+	myFollowing: boolean;
+}
+
+@ObjectType()
+export class Follower {
+	@Field(() => String)
+	_id: ObjectId;
+
+	@Field(() => String)
+	followingId: ObjectId;
+
+	@Field(() => String)
+	followerId: ObjectId;
+
+	@Field(() => Date)
+	createdAt: Date;
+
+	@Field(() => Date)
+	updatedAt: Date;
+
+	/** from aggregation **/
+
+	@Field(() => [LikedByMe], { nullable: true })
+	likedByMe?: LikedByMe[];
+
+	@Field(() => [FollowedByMe], { nullable: true })
+	followedByMe?: FollowedByMe[];
+
+	@Field(() => Member, { nullable: true })
+	followerData?: Member;
+}
+
+@ObjectType()
+export class Following {
+	@Field(() => String)
+	_id: ObjectId;
+
+	@Field(() => String)
+	followingId: ObjectId;
+
+	@Field(() => String)
+	followerId: ObjectId;
+
+	@Field(() => Date)
+	createdAt: Date;
+
+	@Field(() => Date)
+	updatedAt: Date;
+
+	/** from aggregation **/
+
+	@Field(() => [LikedByMe], { nullable: true })
+	likedByMe?: LikedByMe[];
+
+	@Field(() => [FollowedByMe], { nullable: true })
+	followedByMe?: FollowedByMe[];
+
+	@Field(() => Member, { nullable: true })
+	followingData?: Member;
+}
+
+@ObjectType()
+export class Followings {
+	@Field(() => [Following])
+	list: Following[];
+
+	@Field(() => [TotalCounter], { nullable: true })
+	metaCounter: TotalCounter[];
+}
+
+@ObjectType()
+export class Followers {
+	@Field(() => [Follower])
+	list: Follower[];
+
+	@Field(() => [TotalCounter], { nullable: true })
+	metaCounter: TotalCounter[];
+}
