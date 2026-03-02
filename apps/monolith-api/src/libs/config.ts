@@ -41,6 +41,8 @@ export const availableBoardArticleSorts = [
 	'articleViews',
 ];
 
+export const availableCommentSorts = ['createdAt', 'updatedAt'];
+
 // IMAGE CONFIGURATION
 export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 export const getSerialForImage = (filename: string) => {
