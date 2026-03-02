@@ -21,6 +21,9 @@ import { ViewGroup } from '../../libs/enums/view.enum';
 import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
 import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
 import moment from 'moment';
+import { LikeInput } from '../../libs/dto/like/like.input';
+import { LikeGroup } from '../../libs/enums/like.enum';
+import { LikeService } from '../like/like.service';
 
 @Injectable()
 export class FurnitureService {
@@ -28,6 +31,7 @@ export class FurnitureService {
 		@InjectModel('Furniture') private readonly furnitureModel: Model<Furniture>,
 		private readonly viewService: ViewService,
 		private readonly memberService: MemberService,
+		private readonly likeService: LikeService,
 	) {}
 
 	public async createFurniture(input: FurnitureInput): Promise<Furniture> {
@@ -255,6 +259,31 @@ export class FurnitureService {
 		if (!result.length)
 			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		return result[0];
+	}
+
+	public async likeTargetFurniture(
+		memberId: ObjectId,
+		likeRefId: ObjectId,
+	): Promise<Furniture> {
+		const target: Furniture = await this.furnitureModel
+			.findOne({ _id: likeRefId, furnitureStatus: FurnitureStatus.ACTIVE })
+			.exec();
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		const input: LikeInput = {
+			memberId: memberId,
+			likeRefId: likeRefId,
+			likeGroup: LikeGroup.FURNITURE,
+		};
+		const modifier: number = await this.likeService.toggleLike(input);
+		const result = await this.furnitureStatsEditor({
+			_id: likeRefId,
+			targetKey: 'furnitureLikes',
+			modifier: modifier,
+		});
+		if (!result)
+			throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+		return result;
 	}
 
 	public async getAllFurnituresByAdmin(

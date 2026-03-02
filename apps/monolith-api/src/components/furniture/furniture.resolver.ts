@@ -16,6 +16,7 @@ import {
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
 import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Resolver()
 export class FurnitureResolver {
@@ -75,6 +76,17 @@ export class FurnitureResolver {
 	): Promise<Furnitures> {
 		console.log('Query: getDesignerFurnitures');
 		return await this.furnitureService.getDesignerFurnitures(memberId, input);
+	}
+
+	@UseGuards(AuthGuard)
+	@Mutation(() => Furniture)
+	public async likeTargetFurniture(
+		@Args('furnitureId') input: string,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furniture> {
+		console.log('Mutation: likeTargetFurniture');
+		const likeRefId = shapeIntoMongoObjectId(input);
+		return await this.furnitureService.likeTargetFurniture(memberId, likeRefId);
 	}
 
 	/**  ADMIN  **/
