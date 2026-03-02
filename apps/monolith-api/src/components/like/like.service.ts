@@ -29,4 +29,14 @@ export class LikeService {
 		console.log(`- Like modifier ${modifier} -`);
 		return modifier;
 	}
+
+	public async checkLikeExistance(input: LikeInput): Promise<LikedByMe[]> {
+		const { memberId, likeRefId } = input;
+		const result = await this.likeModel
+			.findOne({ memberId: memberId, likeRefId: likeRefId })
+			.exec();
+		return result
+			? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }]
+			: [];
+	}
 }

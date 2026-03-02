@@ -79,6 +79,13 @@ export class FurnitureService {
 				});
 				targetFurniture.furnitureViews++;
 			}
+			const likeInput = {
+				memberId: memberId,
+				likeRefId: furnitureId,
+				likeGroup: LikeGroup.FURNITURE,
+			};
+			targetFurniture.likedByMe =
+				await this.likeService.checkLikeExistance(likeInput);
 		}
 		targetFurniture.memberData = await this.memberService.getMember(
 			null,

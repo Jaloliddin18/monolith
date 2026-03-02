@@ -13,6 +13,7 @@ import {
 	SustainabilityLabel,
 } from '../../enums/furniture.enum';
 import { Member, TotalCounter } from '../member/member';
+import { LikedByMe } from '../like/like';
 
 @ObjectType()
 export class FurnitureDimensions {
@@ -144,6 +145,9 @@ export class Furniture {
 
 	@Field(() => Member, { nullable: true })
 	memberData?: Member;
+
+	@Field(() => [LikedByMe], { nullable: true })
+	likedByMe?: LikedByMe[];
 }
 
 @ObjectType()

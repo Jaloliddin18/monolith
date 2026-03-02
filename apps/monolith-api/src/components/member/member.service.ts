@@ -119,7 +119,13 @@ export class MemberService {
 				targetMember.memberViews++;
 			}
 
-			// likedByMe
+			const likeInput = {
+				memberId: memberId,
+				likeRefId: targetId,
+				likeGroup: LikeGroup.MEMBER,
+			};
+			targetMember.likedByMe =
+				await this.likeService.checkLikeExistance(likeInput);
 			// followedByMe
 		}
 		return targetMember;

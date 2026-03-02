@@ -5,6 +5,7 @@ import {
 } from '../../enums/board-article.enum';
 import type { ObjectId } from 'mongoose';
 import { Member, TotalCounter } from '../member/member';
+import { LikedByMe } from '../like/like';
 
 @ObjectType()
 export class BoardArticle {
@@ -48,6 +49,9 @@ export class BoardArticle {
 
 	@Field(() => Member, { nullable: true })
 	memberData?: Member;
+
+	@Field(() => [LikedByMe], { nullable: true })
+	likedByMe?: LikedByMe[];
 }
 
 @ObjectType()

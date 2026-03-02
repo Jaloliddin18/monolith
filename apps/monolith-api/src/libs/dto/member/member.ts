@@ -5,6 +5,7 @@ import {
 	MemberStatus,
 	MemberType,
 } from '../../enums/member.enum';
+import { LikedByMe } from '../like/like';
 
 @ObjectType()
 export class Member {
@@ -83,6 +84,9 @@ export class Member {
 	updatedAt: Date;
 	@Field(() => String, { nullable: true })
 	accessToken?: string;
+
+	@Field(() => [LikedByMe], { nullable: true })
+	likedByMe?: LikedByMe[];
 }
 
 @ObjectType()
