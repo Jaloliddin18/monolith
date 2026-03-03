@@ -22,7 +22,11 @@ import { ViewService } from '../view/view.service';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
-import { Follower, Following } from '../../libs/dto/follow/follow';
+import {
+	FollowedByMe,
+	Follower,
+	Following,
+} from '../../libs/dto/follow/follow';
 
 @Injectable()
 export class MemberService {
@@ -129,9 +133,34 @@ export class MemberService {
 			};
 			targetMember.likedByMe =
 				await this.likeService.checkLikeExistance(likeInput);
-			// followedByMe
+
+			targetMember.followedByMe = await this.checkSubscription(
+				memberId,
+				targetId,
+			);
 		}
 		return targetMember;
+	}
+
+	private async checkSubscription(
+		followerId: ObjectId,
+		followingId: ObjectId,
+	): Promise<FollowedByMe[]> {
+		const result = await this.followModel
+			.findOne({
+				followingId: followingId,
+				followerId: followerId,
+			})
+			.exec();
+		return result
+			? [
+					{
+						followerId: followerId,
+						followingId: followingId,
+						myFollowing: true,
+					},
+				]
+			: [];
 	}
 
 	public async getDesigners(
