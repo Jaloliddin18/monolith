@@ -19,7 +19,11 @@ import { StatisticModifier, T } from '../../libs/types/common';
 import { FurnitureStatus } from '../../libs/enums/furniture.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { FurnitureUpdate } from '../../libs/dto/furniture/furniture.update';
-import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
+import {
+	lookupAuthMemberLiked,
+	lookupMember,
+	shapeIntoMongoObjectId,
+} from '../../libs/config';
 import moment from 'moment';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
@@ -147,6 +151,7 @@ export class FurnitureService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
+							lookupAuthMemberLiked(memberId),
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],
