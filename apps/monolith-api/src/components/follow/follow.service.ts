@@ -12,7 +12,11 @@ import {
 	Followings,
 } from '../../libs/dto/follow/follow';
 import { MemberService } from '../member/member.service';
-import { lookupFollowingData, lookupFollowerData } from '../../libs/config';
+import {
+	lookupFollowingData,
+	lookupFollowerData,
+	lookupAuthMemberLiked,
+} from '../../libs/config';
 import { FollowInquiry } from '../../libs/dto/follow/follow.input';
 import { Message, Direction } from '../../libs/enums/common.enum';
 import { T } from '../../libs/types/common';
@@ -121,6 +125,9 @@ export class FollowService {
 
 							lookupFollowingData,
 							{ $unwind: '$followingData' },
+							lookupAuthMemberLiked(memberId, '$followingId'),
+							lookupFollowerData,
+							{ $unwind: '$followerData' },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
@@ -152,6 +159,7 @@ export class FollowService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
+							lookupAuthMemberLiked(memberId, '$followerId'),
 
 							lookupFollowerData,
 							{ $unwind: '$followerData' },
