@@ -238,6 +238,13 @@ export class FurnitureService {
 		return await this.likeService.getFavoriteFurnitures(memberId, input);
 	}
 
+	public async getVisited(
+		memberId: ObjectId,
+		input: OrdinaryInquiry,
+	): Promise<Furnitures> {
+		return await this.viewService.getVisitedFurnitures(memberId, input);
+	}
+
 	public async getDesignerFurnitures(
 		memberId: ObjectId,
 		input: DesignerFurnituresInquiry,

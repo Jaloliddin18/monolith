@@ -78,10 +78,13 @@ export class LikeService {
 			])
 			.exec();
 
-		const result: Furnitures = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map(
-			(ele: { favoriteFurniture: any }) => ele.favoriteFurniture,
-		);
+		const result: Furnitures = {
+			list: [],
+			metaCounter: data[0]?.metaCounter || [],
+		};
+		if (data[0]?.list) {
+			result.list = data[0].list.map((ele) => ele.favoriteFurniture);
+		}
 		return result;
 	}
 }

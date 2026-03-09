@@ -78,6 +78,16 @@ export class FurnitureResolver {
 		return await this.furnitureService.getFavorites(memberId, input);
 	}
 
+	@UseGuards(AuthGuard)
+	@Query((returns) => Furnitures)
+	public async getVisited(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furnitures> {
+		console.log('Query: getVisited');
+		return await this.furnitureService.getVisited(memberId, input);
+	}
+
 	@Roles(MemberType.DESIGNER)
 	@UseGuards(RolesGuard)
 	@Query((returns) => Furnitures)

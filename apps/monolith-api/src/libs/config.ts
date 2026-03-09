@@ -166,3 +166,12 @@ export const lookupFavorite = {
 		as: 'favoriteFurniture.memberData',
 	},
 };
+
+export const lookupVisit = {
+	$lookup: {
+		from: 'members',
+		localField: 'visitedFurniture.memberId',
+		foreignField: '_id',
+		as: 'visitedFurniture.memberData',
+	},
+};
