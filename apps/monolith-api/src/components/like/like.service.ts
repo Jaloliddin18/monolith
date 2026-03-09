@@ -1,10 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Like, LikedByMe } from '../../libs/dto/like/like';
 import { Message } from '../../libs/enums/common.enum';
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { T } from '../../libs/types/common';
+import { OrdinaryInquiry } from '../../libs/dto/furniture/furniture.input';
+import { Furnitures } from '../../libs/dto/furniture/furniture';
+import { LikeGroup } from '../../libs/enums/like.enum';
+import { lookupFavorite } from '../../libs/config';
 
 @Injectable()
 export class LikeService {
@@ -38,5 +42,46 @@ export class LikeService {
 		return result
 			? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }]
 			: [];
+	}
+
+	public async getFavoriteFurnitures(
+		memberId: ObjectId,
+		input: OrdinaryInquiry,
+	): Promise<Furnitures> {
+		const { page, limit } = input;
+		const match: T = { likeGroup: LikeGroup.FURNITURE, memberId: memberId };
+
+		const data: T = await this.likeModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: { updatedAt: -1 } },
+				{
+					$lookup: {
+						from: 'furnitures',
+						localField: 'likeRefId',
+						foreignField: '_id',
+						as: 'favoriteFurniture',
+					},
+				},
+				{ $unwind: '$favoriteFurniture' },
+				{
+					$facet: {
+						list: [
+							{ $skip: (page - 1) * limit },
+							{ $limit: limit },
+							lookupFavorite,
+							{ $unwind: '$favoriteFurniture.memberData' },
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+
+		const result: Furnitures = { list: [], metaCounter: data[0].metaCounter };
+		result.list = data[0].list.map(
+			(ele: { favoriteFurniture: any }) => ele.favoriteFurniture,
+		);
+		return result;
 	}
 }

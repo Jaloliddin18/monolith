@@ -12,6 +12,7 @@ import {
 	DesignerFurnituresInquiry,
 	FurnitureInput,
 	FurnituresInquiry,
+	OrdinaryInquiry,
 } from '../../libs/dto/furniture/furniture.input';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
@@ -65,6 +66,16 @@ export class FurnitureResolver {
 	): Promise<Furnitures> {
 		console.log('Query: getProperties');
 		return await this.furnitureService.getFurnitures(memberId, input);
+	}
+
+	@UseGuards(AuthGuard)
+	@Query((returns) => Furnitures)
+	public async getFavorites(
+		@Args('input') input: OrdinaryInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Furnitures> {
+		console.log('Query: getFavorites');
+		return await this.furnitureService.getFavorites(memberId, input);
 	}
 
 	@Roles(MemberType.DESIGNER)

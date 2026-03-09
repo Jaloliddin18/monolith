@@ -12,6 +12,7 @@ import {
 	DesignerFurnituresInquiry,
 	FurnitureInput,
 	FurnituresInquiry,
+	OrdinaryInquiry,
 } from '../../libs/dto/furniture/furniture.input';
 import { Furniture, Furnitures } from '../../libs/dto/furniture/furniture';
 import { MemberService } from '../member/member.service';
@@ -228,6 +229,13 @@ export class FurnitureService {
 				return { [ele]: true };
 			});
 		}
+	}
+
+	public async getFavorites(
+		memberId: ObjectId,
+		input: OrdinaryInquiry,
+	): Promise<Furnitures> {
+		return await this.likeService.getFavoriteFurnitures(memberId, input);
 	}
 
 	public async getDesignerFurnitures(
