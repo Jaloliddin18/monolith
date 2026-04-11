@@ -10,6 +10,7 @@ import {
 	FurnitureRoom,
 	FurnitureStatus,
 	FurnitureStyle,
+	SustainabilityLabel,
 } from '../../enums/furniture.enum';
 import type { ObjectId } from 'mongoose';
 import { availableFurnitureSorts, availableOptions } from '../../config';
@@ -64,6 +65,10 @@ export class FurnitureInput {
 	@IsNotEmpty()
 	@Field(() => FurnitureColor)
 	furnitureColor: FurnitureColor;
+
+	@IsOptional()
+	@Field(() => SustainabilityLabel, { nullable: true })
+	sustainabilityLabel?: SustainabilityLabel;
 
 	@IsNotEmpty()
 	@Field(() => AssemblyType)
