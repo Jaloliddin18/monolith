@@ -19,7 +19,7 @@ export class BatchService {
 		await this.furnitureModel
 			.updateMany(
 				{ furnitureStatus: FurnitureStatus.ACTIVE },
-				{ furnitureRank: 0 },
+				{ furnitureRank: 0, furnitureTrending: 0, furnitureEngagement: 0 },
 			)
 			.exec();
 
@@ -71,6 +71,63 @@ export class BatchService {
 			});
 		});
 		await Promise.all(promisedList);
+	}
+
+	public async batchTrendingFurnitures(): Promise<void> {
+		const furnitures: Furniture[] = await this.furnitureModel
+			.find({
+				furnitureStatus: FurnitureStatus.ACTIVE,
+				furnitureTrending: 0,
+			})
+			.exec();
+
+		const promisedList = furnitures.map(async (ele: Furniture) => {
+			const { _id, furnitureLikes, furnitureViews } = ele;
+			const trending = furnitureViews * 1 + furnitureLikes * 2;
+			return await this.furnitureModel.findByIdAndUpdate(_id, { furnitureTrending: trending });
+		});
+		await Promise.all(promisedList);
+	}
+
+	public async batchSuggestedFurnitures(): Promise<void> {
+		const furnitures: Furniture[] = await this.furnitureModel
+			.find({
+				furnitureStatus: FurnitureStatus.ACTIVE,
+				furnitureEngagement: 0,
+			})
+			.exec();
+
+		const promisedList = furnitures.map(async (ele: Furniture) => {
+			const { _id, furnitureLikes, furnitureViews, furnitureComments } = ele;
+			const engagement = furnitureLikes * 2 + furnitureComments * 3 + furnitureViews * 1;
+			return await this.furnitureModel.findByIdAndUpdate(_id, { furnitureEngagement: engagement });
+		});
+		await Promise.all(promisedList);
+	}
+
+	public async batchDiscountExpiry(): Promise<void> {
+		const now = new Date();
+
+		// Expire active discounts whose end date has passed
+		await this.furnitureModel
+			.updateMany(
+				{ furnitureOnSale: true, discountEnd: { $lt: now } },
+				{ furnitureOnSale: false, furnitureDiscount: 0 },
+			)
+			.exec();
+
+		// Activate scheduled discounts whose window is now open
+		await this.furnitureModel
+			.updateMany(
+				{
+					furnitureOnSale: false,
+					furnitureDiscount: { $gt: 0 },
+					discountStart: { $lte: now },
+					discountEnd: { $gte: now },
+				},
+				{ furnitureOnSale: true },
+			)
+			.exec();
 	}
 
 	public getHello(): string {

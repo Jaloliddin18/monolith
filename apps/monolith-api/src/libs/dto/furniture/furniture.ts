@@ -107,6 +107,12 @@ export class Furniture {
 	@Field(() => Int)
 	furnitureRank: number;
 
+	@Field(() => Int)
+	furnitureTrending: number;
+
+	@Field(() => Int)
+	furnitureEngagement: number;
+
 	@Field(() => Boolean)
 	furnitureRent: boolean;
 

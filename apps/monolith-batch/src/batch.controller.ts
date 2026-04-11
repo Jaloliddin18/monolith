@@ -5,6 +5,9 @@ import {
 	BATCH_ROLLBACK,
 	BATCH_TOP_FURNITURES,
 	BATCH_TOP_DESIGNERS,
+	BATCH_TRENDING_FURNITURES,
+	BATCH_SUGGESTED_FURNITURES,
+	BATCH_DISCOUNT_EXPIRY,
 } from './lib/config';
 
 @Controller()
@@ -45,6 +48,39 @@ export class BatchController {
 			this.logger['context'] = BATCH_TOP_DESIGNERS;
 			this.logger.debug('EXECUTED');
 			await this.batchService.batchTopDesigners();
+		} catch (err) {
+			this.logger.error(err);
+		}
+	}
+
+	@Cron('00 01 01 * * *', { name: BATCH_TRENDING_FURNITURES })
+	public async batchTrendingFurnitures() {
+		try {
+			this.logger['context'] = BATCH_TRENDING_FURNITURES;
+			this.logger.debug('EXECUTED');
+			await this.batchService.batchTrendingFurnitures();
+		} catch (err) {
+			this.logger.error(err);
+		}
+	}
+
+	@Cron('20 01 01 * * *', { name: BATCH_SUGGESTED_FURNITURES })
+	public async batchSuggestedFurnitures() {
+		try {
+			this.logger['context'] = BATCH_SUGGESTED_FURNITURES;
+			this.logger.debug('EXECUTED');
+			await this.batchService.batchSuggestedFurnitures();
+		} catch (err) {
+			this.logger.error(err);
+		}
+	}
+
+	@Cron('00 01 * * * *', { name: BATCH_DISCOUNT_EXPIRY })
+	public async batchDiscountExpiry() {
+		try {
+			this.logger['context'] = BATCH_DISCOUNT_EXPIRY;
+			this.logger.debug('EXECUTED');
+			await this.batchService.batchDiscountExpiry();
 		} catch (err) {
 			this.logger.error(err);
 		}

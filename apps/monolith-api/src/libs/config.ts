@@ -30,6 +30,8 @@ export const availableFurnitureSorts = [
 	'furnitureLikes',
 	'furnitureViews',
 	'furnitureRank',
+	'furnitureTrending',
+	'furnitureEngagement',
 	'furniturePrice',
 	'furnitureDiscount',
 	'furnitureComments',

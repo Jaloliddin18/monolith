@@ -120,6 +120,14 @@ const FurnitureSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
+		furnitureTrending: {
+			type: Number,
+			default: 0,
+		},
+		furnitureEngagement: {
+			type: Number,
+			default: 0,
+		},
 		furnitureRent: {
 			type: Boolean,
 			default: false,
