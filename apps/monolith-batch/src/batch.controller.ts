@@ -75,7 +75,7 @@ export class BatchController {
 		}
 	}
 
-	@Cron('00 01 * * * *', { name: BATCH_DISCOUNT_EXPIRY })
+	@Cron('00 * * * * *', { name: BATCH_DISCOUNT_EXPIRY })
 	public async batchDiscountExpiry() {
 		try {
 			this.logger['context'] = BATCH_DISCOUNT_EXPIRY;
