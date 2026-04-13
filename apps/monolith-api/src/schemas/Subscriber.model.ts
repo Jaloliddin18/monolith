@@ -5,7 +5,6 @@ const SubscriberSchema = new Schema(
 		subscriberEmail: {
 			type: String,
 			required: true,
-			unique: true,
 			lowercase: true,
 			trim: true,
 		},
@@ -16,10 +15,12 @@ const SubscriberSchema = new Schema(
 		unsubscribeToken: {
 			type: String,
 			required: true,
-			unique: true,
 		},
 	},
 	{ timestamps: true, collection: 'subscribers' },
 );
+
+SubscriberSchema.index({ subscriberEmail: 1 }, { unique: true });
+SubscriberSchema.index({ unsubscribeToken: 1 }, { unique: true });
 
 export default SubscriberSchema;
