@@ -47,7 +47,14 @@ export const availableBoardArticleSorts = [
 export const availableCommentSorts = ['createdAt', 'updatedAt'];
 
 // IMAGE CONFIGURATION
-export const validMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+export const validMimeTypes = [
+	'image/png',
+	'image/jpg',
+	'image/jpeg',
+	'video/mp4',
+	'video/webm',
+	'video/quicktime',
+];
 export const getSerialForImage = (filename: string) => {
 	const ext = path.parse(filename).ext;
 	return uuidv4() + ext;

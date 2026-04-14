@@ -11,7 +11,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe()); // integrating PIPES globally (middleware)
 	app.useGlobalInterceptors(new LoggingInterceptor()); // logging standard (middleware)
 	app.enableCors({ origin: true, credentials: true });
-	app.use(graphqlUploadExpress({ maxFileSize: 15000000, maxFiles: 10 }));
+	app.use(graphqlUploadExpress({ maxFileSize: 25000000, maxFiles: 15 }));
 	app.use('/uploads', express.static('./uploads'));
 	app.useWebSocketAdapter(new WsAdapter(app));
 	await app.listen(process.env.PORT_API ?? 3000);

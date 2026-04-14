@@ -200,4 +200,32 @@ export class MemberResolver {
 		await Promise.all(promisedList);
 		return uploadedImages;
 	}
+	@UseGuards(AuthGuard)
+	@Mutation((returns) => String)
+	public async videoUploader(
+		@Args({ name: 'file', type: () => GraphQLUpload })
+		file: Promise<FileUpload>,
+		@Args('target') target: string,
+	): Promise<string> {
+		const { filename, mimetype, createReadStream } = await file;
+
+		const validVideoMimes = ['video/mp4', 'video/webm', 'video/quicktime'];
+		if (!validVideoMimes.includes(mimetype)) {
+			throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
+		}
+
+		const videoName = getSerialForImage(filename);
+		const url = `uploads/${target}/${videoName}`;
+		const stream = createReadStream();
+
+		const result = await new Promise((resolve, reject) => {
+			stream
+				.pipe(createWriteStream(url))
+				.on('finish', () => resolve(true))
+				.on('error', () => reject(false));
+		});
+
+		if (!result) throw new Error(Message.UPLOAD_FAILED);
+		return url;
+	}
 }
