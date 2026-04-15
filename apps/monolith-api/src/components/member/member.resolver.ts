@@ -204,10 +204,9 @@ export class MemberResolver {
 	@Mutation((returns) => String)
 	public async videoUploader(
 		@Args({ name: 'file', type: () => GraphQLUpload })
-		file: Promise<FileUpload>,
+		{ createReadStream, filename, mimetype }: FileUpload,
 		@Args('target') target: string,
 	): Promise<string> {
-		const { filename, mimetype, createReadStream } = await file;
 
 		const validVideoMimes = ['video/mp4', 'video/webm', 'video/quicktime'];
 		if (!validVideoMimes.includes(mimetype)) {

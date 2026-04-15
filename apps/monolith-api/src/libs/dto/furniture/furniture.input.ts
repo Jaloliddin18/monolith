@@ -91,6 +91,10 @@ export class FurnitureInput {
 	furnitureImages: string[];
 
 	@IsOptional()
+	@Field(() => String, { nullable: true })
+	furnitureVideo?: string;
+
+	@IsOptional()
 	@Length(5, 500)
 	@Field(() => String, { nullable: true })
 	furnitureDesc?: string;

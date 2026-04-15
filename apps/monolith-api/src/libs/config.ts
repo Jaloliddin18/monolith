@@ -51,6 +51,7 @@ export const validMimeTypes = [
 	'image/png',
 	'image/jpg',
 	'image/jpeg',
+	'image/webp',
 	'video/mp4',
 	'video/webm',
 	'video/quicktime',
