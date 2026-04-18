@@ -6,15 +6,13 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from '../auth.service';
-import { Message } from 'apps/monolith-api/src/libs/enums/common.enum';
+import { Message } from '../../../libs/enums/common.enum';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
 	constructor(private authService: AuthService) {}
 
 	async canActivate(context: ExecutionContext | any): Promise<boolean> {
-		console.info('--- @guard() Authentication [AuthGuard] ---');
-
 		if (context.contextType === 'graphql') {
 			const request = context.getArgByIndex(2).req;
 
@@ -26,7 +24,6 @@ export class AuthGuard implements CanActivate {
 			if (!authMember)
 				throw new UnauthorizedException(Message.NOT_AUTHENTICATED);
 
-			console.log('memberNick[auth] =>', authMember.memberNick);
 			request.body.authMember = authMember;
 
 			return true;

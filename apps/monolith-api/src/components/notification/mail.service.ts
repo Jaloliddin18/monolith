@@ -7,16 +7,6 @@ export class MailService {
 	private transporter: nodemailer.Transporter;
 
 	constructor() {
-		// DEBUG: print loaded env vars so we can confirm ConfigModule picked them up
-		console.log('[MailService] ENV CHECK:', {
-			MAIL_HOST: process.env.MAIL_HOST,
-			MAIL_PORT: process.env.MAIL_PORT,
-			MAIL_USER: process.env.MAIL_USER,
-			MAIL_PASS: process.env.MAIL_PASS ? '***set***' : 'NOT SET',
-			MAIL_FROM: process.env.MAIL_FROM,
-			FRONTEND_URL: process.env.FRONTEND_URL,
-		});
-
 		const requiredVars = ['MAIL_HOST', 'MAIL_PORT', 'MAIL_USER', 'MAIL_PASS', 'MAIL_FROM', 'FRONTEND_URL'];
 		const missing = requiredVars.filter((v) => !process.env[v]);
 		if (missing.length > 0) {
@@ -36,9 +26,8 @@ export class MailService {
 
 	async sendWelcomeEmail(to: string, unsubscribeToken: string): Promise<void> {
 		const unsubscribeUrl = `${process.env.FRONTEND_URL}/unsubscribe?token=${unsubscribeToken}`;
-		console.log('[MailService] sendWelcomeEmail → to:', to, '| from:', process.env.MAIL_FROM);
 		try {
-			const info = await this.transporter.sendMail({
+			await this.transporter.sendMail({
 				from: process.env.MAIL_FROM,
 				to,
 				subject: 'Welcome to Monolith Newsletter!',
@@ -51,9 +40,7 @@ export class MailService {
           </p>
         `,
 			});
-			console.log('[MailService] sendWelcomeEmail SUCCESS — messageId:', info.messageId);
 		} catch (err: unknown) {
-			console.error('[MailService] sendWelcomeEmail FAILED — full error:', err);
 			this.logger.error('sendWelcomeEmail failed', err instanceof Error ? err.message : String(err));
 		}
 	}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -9,13 +9,17 @@ import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
 import { T } from './libs/types/common';
 import { SocketModule } from './socket/socket.module';
+import { ThrottlerModule } from '@nestjs/throttler';
+
+const logger = new Logger('GraphQL');
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
+		ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
 		GraphQLModule.forRoot({
 			driver: ApolloDriver,
-			playground: true,
+			playground: process.env.NODE_ENV !== 'production',
 			uploads: false,
 			autoSchemaFile: true,
 			formatError: (error: T) => {
@@ -26,7 +30,7 @@ import { SocketModule } from './socket/socket.module';
 						error?.extensions?.response?.message ||
 						error?.message,
 				};
-				console.log('GRAPHQL GLOBAL ERR:', graphQlFormattedError);
+				logger.error('GRAPHQL GLOBAL ERR:', JSON.stringify(graphQlFormattedError));
 				return graphQlFormattedError;
 			},
 		}),

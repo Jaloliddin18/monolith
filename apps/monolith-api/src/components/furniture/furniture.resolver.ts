@@ -30,7 +30,6 @@ export class FurnitureResolver {
 		@Args('input') input: FurnitureInput,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furniture> {
-		console.log('Mutation: createFurniture');
 		input.memberId = memberId;
 		return await this.furnitureService.createFurniture(input);
 	}
@@ -41,7 +40,6 @@ export class FurnitureResolver {
 		@Args('furnitureId') input: string,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furniture> {
-		console.log('Query: getFurniture');
 		const furnitureId = shapeIntoMongoObjectId(input);
 		return await this.furnitureService.getFurniture(memberId, furnitureId);
 	}
@@ -53,7 +51,6 @@ export class FurnitureResolver {
 		@Args('input') input: FurnitureUpdate,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furniture> {
-		console.log('Query: updateProperty');
 		input._id = shapeIntoMongoObjectId(input._id);
 		return await this.furnitureService.updateFurniture(memberId, input);
 	}
@@ -64,7 +61,6 @@ export class FurnitureResolver {
 		@Args('input') input: FurnituresInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furnitures> {
-		console.log('Query: getProperties');
 		return await this.furnitureService.getFurnitures(memberId, input);
 	}
 
@@ -74,7 +70,6 @@ export class FurnitureResolver {
 		@Args('input') input: OrdinaryInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furnitures> {
-		console.log('Query: getFavorites');
 		return await this.furnitureService.getFavorites(memberId, input);
 	}
 
@@ -84,7 +79,6 @@ export class FurnitureResolver {
 		@Args('input') input: OrdinaryInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furnitures> {
-		console.log('Query: getVisited');
 		return await this.furnitureService.getVisited(memberId, input);
 	}
 
@@ -95,7 +89,6 @@ export class FurnitureResolver {
 		@Args('input') input: DesignerFurnituresInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furnitures> {
-		console.log('Query: getDesignerFurnitures');
 		return await this.furnitureService.getDesignerFurnitures(memberId, input);
 	}
 
@@ -105,7 +98,6 @@ export class FurnitureResolver {
 		@Args('furnitureId') input: string,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furniture> {
-		console.log('Mutation: likeTargetFurniture');
 		const likeRefId = shapeIntoMongoObjectId(input);
 		return await this.furnitureService.likeTargetFurniture(memberId, likeRefId);
 	}
@@ -119,7 +111,6 @@ export class FurnitureResolver {
 		@Args('input') input: AllFurnituresInquiry,
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Furnitures> {
-		console.log('Query: getAllFurnituresByAdmin');
 		return await this.furnitureService.getAllFurnituresByAdmin(input);
 	}
 
@@ -129,7 +120,6 @@ export class FurnitureResolver {
 	public async updateFurnitureByAdmin(
 		@Args('input') input: FurnitureUpdate,
 	): Promise<Furniture> {
-		console.log('Mutation: updateFurnitureByAdmin');
 		input._id = shapeIntoMongoObjectId(input._id); // property ObjectId
 		return await this.furnitureService.updateFurnitureByAdmin(input);
 	}
@@ -140,7 +130,6 @@ export class FurnitureResolver {
 	public async removeFurnitureByAdmin(
 		@Args('furnitureId') input: string,
 	): Promise<Furniture> {
-		console.log('Mutation: removeFurnitureByAdmin');
 		const furnitureId = shapeIntoMongoObjectId(input);
 		return await this.furnitureService.removeFurnitureByAdmin(furnitureId);
 	}

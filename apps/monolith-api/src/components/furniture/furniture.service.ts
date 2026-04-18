@@ -49,7 +49,7 @@ export class FurnitureService {
 			});
 			return result;
 		} catch (err) {
-			console.log('Error, Service.model:', err.message);
+			console.error('Error, Service.model:', err.message);
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 	}
@@ -107,7 +107,7 @@ export class FurnitureService {
 		const search: T = {
 			_id: input._id,
 			memberId: memberId,
-			furnitureStatus: FurnitureStatus.ACTIVE,
+			furnitureStatus: { $ne: FurnitureStatus.DELETE },
 		};
 
 		if (furnitureStatus === FurnitureStatus.DISCONTINUED)
@@ -141,7 +141,6 @@ export class FurnitureService {
 		};
 
 		this.shapeMatchQuery(match, input);
-		console.log('match:', match);
 
 		const result = await this.furnitureModel
 			.aggregate([

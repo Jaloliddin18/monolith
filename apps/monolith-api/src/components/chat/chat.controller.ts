@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ChatService } from './chat.service';
 
 class ChatMessageDto {
@@ -10,15 +11,11 @@ class ChatMessageDto {
 export class ChatController {
 	constructor(private readonly chatService: ChatService) {}
 
+	@Throttle({ default: { ttl: 60000, limit: 20 } })
 	@Post('message')
 	async message(@Body() body: ChatMessageDto): Promise<{ reply: string }> {
-		console.log('[ChatController] POST /chat/message received:', {
-			message: body.message,
-			historyLength: (body.history ?? []).length,
-		});
 		try {
 			const reply = await this.chatService.sendMessage(body.message, body.history ?? []);
-			console.log('[ChatController] Reply sent successfully');
 			return { reply };
 		} catch (err: any) {
 			console.error('[ChatController] Error:', err.message);

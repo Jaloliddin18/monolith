@@ -14,20 +14,18 @@ export class NotificationResolver {
 
 	@UseGuards(WithoutGuard)
 	@Mutation(() => Subscriber)
-	public async subscribe(
+	public async subscribeNewsletter(
 		@Args('input') input: SubscribeInput,
 	): Promise<Subscriber> {
-		console.log('Mutation: subscribe');
-		return await this.notificationService.subscribe(input);
+		return await this.notificationService.subscribeNewsletter(input);
 	}
 
 	@UseGuards(WithoutGuard)
 	@Mutation(() => Subscriber)
-	public async unsubscribe(
+	public async unsubscribeNewsletter(
 		@Args('input') input: UnsubscribeInput,
 	): Promise<Subscriber> {
-		console.log('Mutation: unsubscribe');
-		return await this.notificationService.unsubscribe(input);
+		return await this.notificationService.unsubscribeNewsletter(input);
 	}
 
 	@Roles(MemberType.ADMIN)
@@ -36,7 +34,6 @@ export class NotificationResolver {
 	public async getAllSubscribersByAdmin(
 		@Args('input') input: GetSubscribersInquiry,
 	): Promise<Subscribers> {
-		console.log('Query: getAllSubscribersByAdmin');
 		return await this.notificationService.getSubscribers(input);
 	}
 }

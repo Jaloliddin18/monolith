@@ -16,7 +16,6 @@ export class ViewService {
 	public async recordView(input: ViewInput): Promise<View | null> {
 		const viewExist = await this.checkViewExistane(input);
 		if (!viewExist) {
-			console.log('- New View Insertion -');
 			return await this.viewModel.create(input);
 		} else return null;
 	}
@@ -65,12 +64,10 @@ export class ViewService {
 			])
 			.exec();
 
-		console.log('data:', data);
 		const result: Furnitures = {
 			list: [],
 			metaCounter: data[0]?.metaCounter || [],
 		};
-		console.log('result:', result);
 		if (data[0]?.list) {
 			result.list = data[0].list.map((ele) => ele.visitedFurniture);
 		}

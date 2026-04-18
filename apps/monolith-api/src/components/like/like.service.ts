@@ -26,11 +26,10 @@ export class LikeService {
 			try {
 				await this.likeModel.create(input);
 			} catch (err) {
-				console.log('Error, Service.model:', err.message);
+				console.error('Error, Service.model:', err.message);
 				throw new BadRequestException(Message.CREATE_FAILED);
 			}
 		}
-		console.log(`- Like modifier ${modifier} -`);
 		return modifier;
 	}
 

@@ -1,9 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
-import { Subscriber, Subscribers } from '../../libs/dto/notification/notification';
-import { GetSubscribersInquiry, SubscribeInput, UnsubscribeInput } from '../../libs/dto/notification/notification.input';
+import {
+	Subscriber,
+	Subscribers,
+} from '../../libs/dto/notification/notification';
+import {
+	GetSubscribersInquiry,
+	SubscribeInput,
+	UnsubscribeInput,
+} from '../../libs/dto/notification/notification.input';
 import { MailService } from './mail.service';
 import { Direction, Message } from '../../libs/enums/common.enum';
 
@@ -15,7 +22,7 @@ export class NotificationService {
 		private readonly mailService: MailService,
 	) {}
 
-	public async subscribe(input: SubscribeInput): Promise<Subscriber> {
+	public async subscribeNewsletter(input: SubscribeInput): Promise<Subscriber> {
 		const existing = await this.subscriberModel.findOne({
 			subscriberEmail: input.subscriberEmail,
 		});
@@ -25,40 +32,61 @@ export class NotificationService {
 				throw new BadRequestException(Message.ALREADY_SUBSCRIBED);
 			}
 			existing.isActive = true;
-			existing.unsubscribeToken = uuidv4();
+			existing.unsubscribeToken = randomUUID();
 			await existing.save();
-			await this.mailService.sendWelcomeEmail(existing.subscriberEmail, existing.unsubscribeToken);
+			await this.mailService.sendWelcomeEmail(
+				existing.subscriberEmail,
+				existing.unsubscribeToken,
+			);
 			return existing;
 		}
 
-		const unsubscribeToken = uuidv4();
+		const unsubscribeToken = randomUUID();
 		try {
 			const subscriber = await this.subscriberModel.create({
 				subscriberEmail: input.subscriberEmail,
 				unsubscribeToken,
 			});
-			await this.mailService.sendWelcomeEmail(subscriber.subscriberEmail, unsubscribeToken);
+			await this.mailService.sendWelcomeEmail(
+				subscriber.subscriberEmail,
+				unsubscribeToken,
+			);
 			return subscriber;
 		} catch (err: unknown) {
-			console.log('Error, NotificationService.subscribe:', err instanceof Error ? err.message : String(err));
+			console.error(
+				'Error, NotificationService.subscribeNewsletter:',
+				err instanceof Error ? err.message : String(err),
+			);
 			throw new BadRequestException(Message.BAD_REQUEST);
 		}
 	}
 
-	public async unsubscribe(input: UnsubscribeInput): Promise<Subscriber> {
+	public async unsubscribeNewsletter(
+		input: UnsubscribeInput,
+	): Promise<Subscriber> {
 		const subscriber = await this.subscriberModel.findOne({
 			unsubscribeToken: input.unsubscribeToken,
 		});
-		if (!subscriber) throw new BadRequestException(Message.INVALID_UNSUBSCRIBE_TOKEN);
+		if (!subscriber)
+			throw new BadRequestException(Message.INVALID_UNSUBSCRIBE_TOKEN);
 
 		subscriber.isActive = false;
 		await subscriber.save();
-		await this.mailService.sendUnsubscribeConfirmation(subscriber.subscriberEmail);
+		await this.mailService.sendUnsubscribeConfirmation(
+			subscriber.subscriberEmail,
+		);
 		return subscriber;
 	}
 
-	public async getSubscribers(input: GetSubscribersInquiry): Promise<Subscribers> {
-		const { page, limit, sort = 'createdAt', direction = Direction.DESC } = input;
+	public async getSubscribers(
+		input: GetSubscribersInquiry,
+	): Promise<Subscribers> {
+		const {
+			page,
+			limit,
+			sort = 'createdAt',
+			direction = Direction.DESC,
+		} = input;
 		const skip = (page - 1) * limit;
 
 		const [list, total] = await Promise.all([

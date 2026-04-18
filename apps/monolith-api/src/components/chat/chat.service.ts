@@ -55,14 +55,6 @@ export class ChatService {
 			{ role: 'user', content: message },
 		];
 
-		console.log('[ChatService] Sending request to Groq:', {
-			model: 'llama-3.3-70b-versatile',
-			apiKeyPresent: !!apiKey,
-			apiKeyPrefix: apiKey.slice(0, 8) + '...',
-			messageCount: messages.length,
-			productsLoaded: furnitures.length,
-		});
-
 		try {
 			const response = await axios.post(
 				'https://api.groq.com/openai/v1/chat/completions',
@@ -80,7 +72,6 @@ export class ChatService {
 				},
 			);
 
-			console.log('[ChatService] Groq response status:', response.status);
 			return response.data.choices[0].message.content as string;
 		} catch (err: any) {
 			console.error('[ChatService] Groq API error:', {
