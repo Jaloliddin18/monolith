@@ -5,8 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MongooseModule } from '@nestjs/mongoose';
-import FurnitureSchema from 'apps/monolith-api/src/schemas/Furniture.model';
-import MemberSchema from 'apps/monolith-api/src/schemas/Member.model';
+import FurnitureSchema from '../../monolith-api/src/schemas/Furniture.model';
+import MemberSchema from '../../monolith-api/src/schemas/Member.model';
 
 @Module({
 	imports: [

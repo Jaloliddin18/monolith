@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Member } from 'apps/monolith-api/src/libs/dto/member/member';
-import { Furniture } from 'apps/monolith-api/src/libs/dto/furniture/furniture';
+import { Member } from '../../monolith-api/src/libs/dto/member/member';
+import { Furniture } from '../../monolith-api/src/libs/dto/furniture/furniture';
 import {
 	MemberStatus,
 	MemberType,
-} from 'apps/monolith-api/src/libs/enums/member.enum';
-import { FurnitureStatus } from 'apps/monolith-api/src/libs/enums/furniture.enum';
+} from '../../monolith-api/src/libs/enums/member.enum';
+import { FurnitureStatus } from '../../monolith-api/src/libs/enums/furniture.enum';
 import { Model } from 'mongoose';
 
 @Injectable()
