@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  monolith-api:
+    container_name: monolith-api
+    restart: always
+    image: node:20.19.5
+    ports:
+      - 4001:3007
+    volumes:
+      - ./:/usr/src/monolith
+    working_dir: /usr/src/monolith
+
+    networks:
+      - monorepo-network
+
+    command: sh -c "npm install && npm run build && npm run start:prod"
+
+  monolith-batch:
+    container_name: monolith-batch
+    restart: unless-stopped
+    image: node:20.19.5
+    ports:
+      - 4002:3008
+    volumes:
+      - ./:/usr/src/monolith
+    working_dir: /usr/src/monolith
+
+    networks:
+      - monorepo-network
+
+    command: sh -c "npm install && npm run build && npm run start:prod:batch"
+
+networks:
+  monorepo-network:
+    driver: bridge
