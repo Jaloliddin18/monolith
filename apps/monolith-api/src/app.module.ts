@@ -22,6 +22,7 @@ const logger = new Logger('GraphQL');
 			playground: process.env.NODE_ENV !== 'production',
 			uploads: false,
 			autoSchemaFile: true,
+			csrfPrevention: false,
 			formatError: (error: T) => {
 				const graphQlFormattedError = {
 					code: error?.extensions.code,
@@ -30,7 +31,10 @@ const logger = new Logger('GraphQL');
 						error?.extensions?.response?.message ||
 						error?.message,
 				};
-				logger.error('GRAPHQL GLOBAL ERR:', JSON.stringify(graphQlFormattedError));
+				logger.error(
+					'GRAPHQL GLOBAL ERR:',
+					JSON.stringify(graphQlFormattedError),
+				);
 				return graphQlFormattedError;
 			},
 		}),
