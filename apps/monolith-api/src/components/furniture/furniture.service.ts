@@ -49,7 +49,8 @@ export class FurnitureService {
 			});
 			return result;
 		} catch (err) {
-			console.error('Error, Service.model:', err.message);
+			const errorMessage = err instanceof Error ? err.message : String(err);
+			console.error('Error, Service.model:', errorMessage);
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
 	}
@@ -181,6 +182,7 @@ export class FurnitureService {
 			dimensionsRange,
 			periodsRange,
 			text,
+			furnitureDiscountMin,
 		} = input.search;
 
 		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
@@ -223,6 +225,7 @@ export class FurnitureService {
 		}
 
 		if (text) match.furnitureTitle = { $regex: new RegExp(text, 'i') };
+		if (furnitureDiscountMin) match.furnitureDiscount = { $gte: furnitureDiscountMin };
 		if (options) {
 			match['$or'] = options.map((ele) => {
 				return { [ele]: true };

@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsIn, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Max, Min } from 'class-validator';
 import {
 	AssemblyDifficulty,
 	AssemblyType,
@@ -229,6 +229,13 @@ export class FIsearch {
 	@IsOptional()
 	@Field(() => String, { nullable: true })
 	text?: string;
+
+	@IsOptional()
+	@IsInt()
+	@Min(0)
+	@Max(100)
+	@Field(() => Int, { nullable: true })
+	furnitureDiscountMin?: number;
 }
 
 @InputType()
