@@ -46,6 +46,10 @@ export const availableBoardArticleSorts = [
 
 export const availableCommentSorts = ['createdAt', 'updatedAt'];
 
+export const availableNoticeSorts = ['createdAt', 'updatedAt'];
+
+export const availableInquirySorts = ['createdAt', 'updatedAt'];
+
 // IMAGE CONFIGURATION
 export const validMimeTypes = [
 	'image/png',
