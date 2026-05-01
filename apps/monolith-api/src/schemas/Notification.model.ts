@@ -22,7 +22,6 @@ const NotificationSchema = new Schema(
 		notificationGroup: {
 			type: String,
 			enum: NotificationGroup,
-			required: true,
 		},
 
 		notificationTitle: {
@@ -54,6 +53,11 @@ const NotificationSchema = new Schema(
 		articleId: {
 			type: Schema.Types.ObjectId,
 			ref: 'BoardArticle',
+		},
+
+		noticeId: {
+			type: Schema.Types.ObjectId,
+			ref: 'Notice',
 		},
 	},
 	{ timestamps: true, collection: 'notifications' },

@@ -262,6 +262,15 @@ export class MemberService {
 		return result;
 	}
 
+	public async getAllActiveMemberIds(): Promise<ObjectId[]> {
+		const members = await this.memberModel
+			.find({ memberStatus: MemberStatus.ACTIVE })
+			.select('_id')
+			.lean()
+			.exec();
+		return members.map((m: any) => m._id);
+	}
+
 	public async memberStatsEditor(input: StatisticModifier): Promise<Member> {
 		const { _id, targetKey, modifier } = input;
 		return await this.memberModel

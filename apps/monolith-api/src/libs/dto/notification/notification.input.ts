@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsEmail, IsIn, IsNotEmpty, IsOptional, IsString, IsUUID, Length, Min } from 'class-validator';
+import { IsEmail, IsIn, IsMongoId, IsNotEmpty, IsOptional, IsString, IsUUID, Length, Min } from 'class-validator';
 import { Direction } from '../../enums/common.enum';
 
 @InputType()
@@ -40,4 +40,12 @@ export class GetSubscribersInquiry {
 	@IsOptional()
 	@Field(() => Direction, { nullable: true })
 	direction?: Direction;
+}
+
+@InputType()
+export class MarkNotificationReadInput {
+	@IsNotEmpty()
+	@IsMongoId()
+	@Field(() => String)
+	notificationId: string;
 }

@@ -5,12 +5,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import NoticeSchema from '../../schemas/Notice.model';
 import { AuthModule } from '../auth/auth.module';
 import { MemberModule } from '../member/member.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: 'Notice', schema: NoticeSchema }]),
 		AuthModule,
 		MemberModule,
+		NotificationModule,
 	],
 	providers: [NoticeResolver, NoticeService],
 	exports: [NoticeService],

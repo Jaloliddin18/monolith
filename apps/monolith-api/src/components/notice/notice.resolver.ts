@@ -24,6 +24,14 @@ export class NoticeResolver {
 		return await this.noticeService.getNotices(input);
 	}
 
+	@UseGuards(WithoutGuard)
+	@Query((returns) => Notice)
+	public async getNoticeById(
+		@Args('noticeId') noticeId: string,
+	): Promise<Notice> {
+		return await this.noticeService.getNoticeById(noticeId);
+	}
+
 	/** ADMIN **/
 
 	@Roles(MemberType.ADMIN)
@@ -54,7 +62,7 @@ export class NoticeResolver {
 		@AuthMember('_id') memberId: ObjectId,
 	): Promise<Notice> {
 		input._id = shapeIntoMongoObjectId(input._id);
-		return await this.noticeService.updateNoticeByAdmin(input);
+		return await this.noticeService.updateNoticeByAdmin(input, memberId);
 	}
 
 	@Roles(MemberType.ADMIN)
