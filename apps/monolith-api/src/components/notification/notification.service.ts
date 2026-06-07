@@ -17,6 +17,8 @@ import { MailService } from './mail.service';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { NotificationStatus, NotificationType } from '../../libs/enums/notification.enum';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { NoticeCategory } from '../../libs/enums/notice.enum';
+import { SocketGateway } from '../../socket/socket.gateway';
 
 @Injectable()
 export class NotificationService {
@@ -28,13 +30,15 @@ export class NotificationService {
 		private readonly notificationModel: Model<AppNotification>,
 
 		private readonly mailService: MailService,
+		private readonly socketGateway: SocketGateway,
 	) {}
 
 	/** NEWSLETTER **/
 
 	public async subscribeNewsletter(input: SubscribeInput): Promise<Subscriber> {
+		const subscriberEmail = input.subscriberEmail.trim().toLowerCase();
 		const existing = await this.subscriberModel.findOne({
-			subscriberEmail: input.subscriberEmail,
+			subscriberEmail,
 		});
 
 		if (existing) {
@@ -54,7 +58,7 @@ export class NotificationService {
 		const unsubscribeToken = randomUUID();
 		try {
 			const subscriber = await this.subscriberModel.create({
-				subscriberEmail: input.subscriberEmail,
+				subscriberEmail,
 				unsubscribeToken,
 			});
 			await this.mailService.sendWelcomeEmail(
@@ -63,6 +67,22 @@ export class NotificationService {
 			);
 			return subscriber;
 		} catch (err: unknown) {
+			if ((err as { code?: number })?.code === 11000) {
+				const duplicate = await this.subscriberModel.findOne({ subscriberEmail });
+				if (duplicate?.isActive) {
+					throw new BadRequestException(Message.ALREADY_SUBSCRIBED);
+				}
+				if (duplicate) {
+					duplicate.isActive = true;
+					duplicate.unsubscribeToken = unsubscribeToken;
+					await duplicate.save();
+					await this.mailService.sendWelcomeEmail(
+						duplicate.subscriberEmail,
+						duplicate.unsubscribeToken,
+					);
+					return duplicate;
+				}
+			}
 			console.error(
 				'Error, NotificationService.subscribeNewsletter:',
 				err instanceof Error ? err.message : String(err),
@@ -121,6 +141,7 @@ export class NotificationService {
 		authorId: ObjectId;
 		receiverIds: ObjectId[];
 		noticeId?: ObjectId;
+		noticeCategory?: NoticeCategory;
 	}): Promise<void> {
 		if (!data.receiverIds.length) return;
 		const docs = data.receiverIds.map((receiverId) => ({
@@ -131,8 +152,10 @@ export class NotificationService {
 			authorId: data.authorId,
 			receiverId,
 			noticeId: data.noticeId,
+			noticeCategory: data.noticeCategory,
 		}));
-		await this.notificationModel.insertMany(docs);
+		const notifications = await this.notificationModel.insertMany(docs);
+		this.socketGateway.emitNotifications(notifications as unknown as AppNotification[]);
 	}
 
 	public async getMyNotifications(receiverId: ObjectId): Promise<AppNotifications> {

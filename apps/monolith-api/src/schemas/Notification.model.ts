@@ -1,4 +1,5 @@
 import { Schema } from 'mongoose';
+import { NoticeCategory } from '../libs/enums/notice.enum';
 import {
 	NotificationGroup,
 	NotificationStatus,
@@ -58,6 +59,11 @@ const NotificationSchema = new Schema(
 		noticeId: {
 			type: Schema.Types.ObjectId,
 			ref: 'Notice',
+		},
+
+		noticeCategory: {
+			type: String,
+			enum: NoticeCategory,
 		},
 	},
 	{ timestamps: true, collection: 'notifications' },

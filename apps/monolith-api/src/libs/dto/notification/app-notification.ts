@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import type { ObjectId } from 'mongoose';
+import { NoticeCategory } from '../../enums/notice.enum';
 import { NotificationStatus, NotificationType } from '../../enums/notification.enum';
 import { TotalCounter } from '../member/member';
 
@@ -28,6 +29,9 @@ export class AppNotification {
 
 	@Field(() => String, { nullable: true })
 	noticeId?: ObjectId;
+
+	@Field(() => NoticeCategory, { nullable: true })
+	noticeCategory?: NoticeCategory;
 
 	@Field(() => String, { nullable: true })
 	furnitureId?: ObjectId;

@@ -24,8 +24,8 @@ export class NoticeService {
 		input.memberId = memberId;
 		try {
 			const notice = await this.noticeModel.create(input);
-			if (input.noticeStatus === NoticeStatus.ACTIVE && input.noticeCategory === NoticeCategory.ANNOUNCEMENT) {
-				await this.sendAnnouncementNotifications(notice, memberId);
+			if (input.noticeStatus === NoticeStatus.ACTIVE && this.isNotifiableCategory(input.noticeCategory)) {
+				await this.sendNoticeNotifications(notice, memberId);
 			}
 			return notice;
 		} catch (err) {
@@ -107,9 +107,9 @@ export class NoticeService {
 		if (
 			before?.noticeStatus !== NoticeStatus.ACTIVE &&
 			result.noticeStatus === NoticeStatus.ACTIVE &&
-			result.noticeCategory === NoticeCategory.ANNOUNCEMENT
+			this.isNotifiableCategory(result.noticeCategory)
 		) {
-			await this.sendAnnouncementNotifications(result, memberId);
+			await this.sendNoticeNotifications(result, memberId);
 		}
 		return result;
 	}
@@ -130,20 +130,47 @@ export class NoticeService {
 		return result;
 	}
 
-	private async sendAnnouncementNotifications(notice: Notice, authorId: ObjectId): Promise<void> {
+	private isNotifiableCategory(category?: NoticeCategory): boolean {
+		return !!category && [NoticeCategory.ANNOUNCEMENT, NoticeCategory.FAQ, NoticeCategory.TERMS].includes(category);
+	}
+
+	private buildNotificationCopy(notice: Notice): { title: string; description: string } {
+		switch (notice.noticeCategory) {
+			case NoticeCategory.FAQ:
+				return {
+					title: notice.noticeTitle,
+					description: `New FAQ: ${notice.noticeTitle}`,
+				};
+			case NoticeCategory.TERMS:
+				return {
+					title: notice.noticeTitle,
+					description: `Terms update: ${notice.noticeTitle}`,
+				};
+			case NoticeCategory.ANNOUNCEMENT:
+			default:
+				return {
+					title: notice.noticeTitle,
+					description: `New announcement: ${notice.noticeTitle}`,
+				};
+		}
+	}
+
+	private async sendNoticeNotifications(notice: Notice, authorId: ObjectId): Promise<void> {
 		try {
 			const receiverIds = await this.memberService.getAllActiveMemberIds();
+			const copy = this.buildNotificationCopy(notice);
 			await this.notificationService.createManyNotifications({
 				notificationType: NotificationType.ANNOUNCEMENT,
-				notificationTitle: notice.noticeTitle,
-				notificationDesc: `New announcement: ${notice.noticeTitle}`,
+				notificationTitle: copy.title,
+				notificationDesc: copy.description,
 				authorId,
 				receiverIds,
 				noticeId: notice._id as ObjectId,
+				noticeCategory: notice.noticeCategory,
 			});
 		} catch (err) {
 			console.error(
-				'Failed to send announcement notifications:',
+				'Failed to send notice notifications:',
 				err instanceof Error ? err.message : String(err),
 			);
 		}

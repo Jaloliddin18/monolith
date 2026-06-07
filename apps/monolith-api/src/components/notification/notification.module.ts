@@ -6,6 +6,7 @@ import { NotificationResolver } from './notification.resolver';
 import { NotificationService } from './notification.service';
 import { MailService } from './mail.service';
 import { AuthModule } from '../auth/auth.module';
+import { SocketModule } from '../../socket/socket.module';
 
 @Module({
 	imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from '../auth/auth.module';
 			{ name: 'Notification', schema: NotificationSchema },
 		]),
 		AuthModule,
+		SocketModule,
 	],
 	providers: [NotificationResolver, NotificationService, MailService],
 	exports: [NotificationService, MailService],

@@ -10,6 +10,7 @@ import * as WebSocket from 'ws';
 import { AuthService } from '../components/auth/auth.service';
 import { Member } from '../libs/dto/member/member';
 import * as url from 'url';
+import { AppNotification } from '../libs/dto/notification/app-notification';
 
 interface MessagePayload {
 	event: string;
@@ -24,10 +25,15 @@ interface InfoPayload {
 	action: string;
 }
 
+interface NotificationPayload {
+	event: 'notification';
+	receiverId: string;
+	notificationId: string;
+}
+
 @WebSocketGateway({ transports: ['websocket'], secure: false })
 export class SocketGateway implements OnGatewayInit {
 	private logger: Logger = new Logger('SocketEventsGateway');
-	private summaryClient: number = 0;
 	private clientAuthMap = new Map<WebSocket, Member>();
 	private messageList: MessagePayload[] = [];
 
@@ -38,8 +44,23 @@ export class SocketGateway implements OnGatewayInit {
 
 	public afterInit(server: Server) {
 		this.logger.verbose(
-			`WebSocket Server Initialized & total [${this.summaryClient}]`,
+			`WebSocket Server Initialized & total [${this.getOnlineCount()}]`,
 		);
+	}
+
+	private getOnlineCount(): number {
+		const memberIds = new Set<string>();
+		let guestCount = 0;
+
+		this.clientAuthMap.forEach((member) => {
+			if (member?._id) {
+				memberIds.add(String(member._id));
+			} else {
+				guestCount++;
+			}
+		});
+
+		return memberIds.size + guestCount;
 	}
 
 	private async retrieveAuth(req: any): Promise<Member> {
@@ -54,18 +75,18 @@ export class SocketGateway implements OnGatewayInit {
 
 	public async handleConnection(client: WebSocket, req: any) {
 		const authMember = await this.retrieveAuth(req);
-		this.summaryClient++;
 		this.clientAuthMap.set(client, authMember);
+		const totalClients = this.getOnlineCount();
 
 		const clientNick: string = authMember?.memberNick ?? 'Guest';
 
 		this.logger.verbose(
-			`Connection [${clientNick}] & total [${this.summaryClient}]`,
+			`Connection [${clientNick}] & total [${totalClients}]`,
 		);
 
 		const infoMsg: InfoPayload = {
 			event: 'info',
-			totalClients: this.summaryClient,
+			totalClients,
 			memberData: authMember,
 			action: 'joined',
 		};
@@ -76,17 +97,17 @@ export class SocketGateway implements OnGatewayInit {
 	}
 	public handleDisconnect(client: WebSocket) {
 		const authMember = this.clientAuthMap.get(client);
-		this.summaryClient--;
 		this.clientAuthMap.delete(client);
+		const totalClients = this.getOnlineCount();
 
 		const clientNick: string = authMember?.memberNick ?? 'Guest';
 		this.logger.verbose(
-			`Disconnection [${clientNick}] & total [${this.summaryClient}]`,
+			`Disconnection [${clientNick}] & total [${totalClients}]`,
 		);
 
 		const infoMsg: InfoPayload = {
 			event: 'info',
-			totalClients: this.summaryClient,
+			totalClients,
 			memberData: authMember,
 			action: 'left',
 		};
@@ -128,6 +149,36 @@ export class SocketGateway implements OnGatewayInit {
 			if (client.readyState === WebSocket.OPEN) {
 				client.send(JSON.stringify(message));
 			}
+		});
+	}
+
+	public emitNotifications(notifications: AppNotification[]): void {
+		if (!notifications.length) return;
+
+		const payloadsByReceiver = new Map<string, NotificationPayload[]>();
+
+		notifications.forEach((notification) => {
+			const receiverId = String(notification.receiverId);
+			const payloads = payloadsByReceiver.get(receiverId) ?? [];
+			payloads.push({
+				event: 'notification',
+				receiverId,
+				notificationId: String(notification._id),
+			});
+			payloadsByReceiver.set(receiverId, payloads);
+		});
+
+		this.server.clients.forEach((client) => {
+			if (client.readyState !== WebSocket.OPEN) return;
+			const authMember = this.clientAuthMap.get(client as unknown as WebSocket);
+			if (!authMember?._id) return;
+
+			const payloads = payloadsByReceiver.get(String(authMember._id));
+			if (!payloads?.length) return;
+
+			payloads.forEach((payload) => {
+				client.send(JSON.stringify(payload));
+			});
 		});
 	}
 }
